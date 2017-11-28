@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container" id="divRegistro" style="display:none">
+		<div class="row">
+			<div class="col-md-12">
+				<input type="text" placeholder="Correo electrónico" id="email"><br>
+				<input type="password" placeholder="Contraseña" id="pwd1"><br>
+				<input type="password" placeholder="Repite contraseña" id="pwd2"><br>
+				<button onclick="registrar()" id="btnRegistrar">Registrarse</button>
+				<span id="mensajeRegistro"></span>
+			</div> 
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div id="divDatosUsuario">
+					Nombre: <input type="text" id="nombre"><br>
+					Número de jugadores: <input type="number" id="numero"><br>
+					<button id="btnCrearPartida" onclick="crearPartida()">Crear</button>
+					<button id="btnUnirseAPartida" onclick="unirse()">Unirse</button>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="row">
+					<div id="divMensajes"></div>
+				</div>
+				<div class="row">
+					<div id="divChat"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="container" style="display:none" id="divTablero">
+		<div class="row">
+			<div class="col-md-12">
+				<svg id="svgTablero" width="500" height="500" style="background-color:grey">
+				</svg>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<button id="btnDado" style="display:none" onclick="tirarDado()">
+					Este es el dado
+				</button>
+			</div>
+			<div class="col-md-9">
+				<span id="spanListaJugadores"></span>
+			</div>
+		</div>
+	</div>
+	
+	
+	<script>
+	</script>
+	
+	<script src="scripts/partidas.js"></script>
+	<script src="scripts/tablero.js"></script>
+	<script src="scripts/GestionCuentas.js"></script>
+	<script>
+	
+	if (localStorage.nombre!=undefined)
+		document.getElementById("nombre").value=localStorage.nombre;	
+	
+	</script>
+</body>
+</html>

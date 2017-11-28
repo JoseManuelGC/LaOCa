@@ -1,0 +1,46 @@
+// Creación de un súperusuario
+var root = {
+	user : "root",
+	pwd  : "root",
+	roles : [
+		{ 
+			role : "userAdminAnyDatabase", db : "admin"
+		},
+		{ 
+			role : "dbOwner", db : "admin"
+		}
+	]
+}
+
+db.createUser(root)
+
+// Creación de un rol
+var rolJugadorDeLaOca = {
+	role : "JugadorDeLaOca",
+	privileges : [
+		{
+			resource : {
+				db : "MACARIO",
+				collection : "usuarios"
+			},
+			actions : ["find"]
+		}
+	],
+	roles : []
+}
+
+// Creación de un usuario con ese rol
+var jugadorGenerico = {
+	user : "jugador",
+	pwd  : "jugador",
+	roles : [
+		{ 
+			role : "JugadorDeLaOca", db : "MACARIO"
+		}
+	]
+}
+
+db.createUser(jugadorGenerico)
+
+Para lanzar mongo en modo "seguro":
+mongod --auth
