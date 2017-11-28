@@ -47,7 +47,7 @@ public class Partida {
 			jsa.put(jugador.getLogin());
 		jso.put("jugadores", jsa);
 		
-		//broadcast(jso);
+		broadcast(jso);
 	}
 
 	public Usuario getJugadorConElTurno() {
@@ -138,7 +138,7 @@ public class Partida {
 			catch (Exception e) {
 				// TODO: eliminar de la colección, mirar si la partida ha terminado
 				// y decirle al WSServer que quite a este jugador
-				//this.jugadores.remove(jugador);
+				this.jugadores.remove(jugador);
 				//WSPartidas.removeSession(jugador);
 			}
 		}

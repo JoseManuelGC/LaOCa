@@ -88,6 +88,11 @@ function addMensaje(texto) {
 	div.innerHTML=texto;
 }
 
+function tirarDado() {
+	
+	divDado.innerHTML="Tira 5";
+}
+
 
 
 
