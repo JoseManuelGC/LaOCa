@@ -23,8 +23,8 @@ public class MongoBroker {
 	private MongoBroker() {
 		MongoCredential credenciales=MongoCredential.createCredential("creadorDeUsuarios", 
 					"admin", "creadorDeUsuarios".toCharArray());
-		//ServerAddress address=new ServerAddress("alarcosj.esi.uclm.es");
-		ServerAddress address=new ServerAddress("localhost:27017");
+		ServerAddress address=new ServerAddress("alarcosj.esi.uclm.es");
+		//ServerAddress address=new ServerAddress("localhost:27017");
 		List<MongoCredential> lista=Arrays.asList(credenciales);
 		this.conexionPrivilegiada=new MongoClient(address, lista);
 		
