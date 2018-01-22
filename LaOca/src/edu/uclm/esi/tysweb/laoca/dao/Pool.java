@@ -5,43 +5,38 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.mongodb.MongoClient;
+
 public class Pool {
-	private ConcurrentLinkedQueue<Connection> libres;
-	private ConcurrentLinkedQueue<Connection> usadas;
+	private ConcurrentLinkedQueue<MongoClient> libres;
+	private ConcurrentLinkedQueue<MongoClient> usadas;
 	
 	Pool(int numeroDeConexiones) {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.exit(-1);
-		}
-		String url="jdbc:mysql://alarcosj.esi.uclm.es:3306/listadelacompra";
 		this.libres=new ConcurrentLinkedQueue<>();
 		this.usadas=new ConcurrentLinkedQueue<>();
 		for (int i=0; i<numeroDeConexiones; i++) {
-			Connection bd;
+			MongoClient conexion = new MongoClient("localhost", 27017);
 			try {
-				bd = DriverManager.getConnection(url, "listadelacompra", "");
-				this.libres.add(bd);
-				System.out.println("Conexión establecida: " + i);
-			} catch (SQLException e) {
-				System.out.println("Falló con la conexión: " + i);
+				this.libres.add(conexion);
+				System.out.println("Conexion establecida: " + i);
+			} catch (Exception e) {
+				System.out.println("Fallo con la conexion: " + i);
 				e.printStackTrace();
 				break;
 			}
 		}
 	}
 
-	public Connection getBD() throws Exception {
+	public MongoClient getConnection() throws Exception {
 		if (this.libres.size()==0)
 			throw new Exception("No hay conexiones libres");
-		Connection bd=this.libres.poll();
-		this.usadas.offer(bd);
-		return bd;
+		MongoClient conexion = this.libres.poll();
+		this.usadas.offer(conexion);
+		return conexion;
 	}
 
-	public void close(Connection bd) {
-		this.usadas.remove(bd);
-		this.libres.offer(bd);
+	public void close(MongoClient conexion) {
+		this.usadas.remove(conexion);
+		this.libres.offer(conexion);
 	}
 }

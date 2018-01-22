@@ -79,28 +79,27 @@ public class DAOUsuario {
 	}
 
 	public static Usuario login(String username, String password) throws Exception {
-		/*
-		MongoClient conexion=MongoBroker.get().getDatabase("MACARIO", email, pwd);
-		
+		MongoClient bd = MongoBroker.get().getConexionPrivilegiada();
+		MongoDatabase db= MongoBroker.get().getDatabase("oca", username, password);
 		BsonDocument criterio=new BsonDocument();
-		criterio.append("email", new BsonString(email));
-		MongoCollection<BsonDocument> usuarios=
-				conexion.getDatabase("MACARIO").getCollection("usuarios", BsonDocument.class);
+		criterio.append("username", new BsonString(username));
+		MongoCollection<BsonDocument> usuarios= db.getCollection("usuarios", BsonDocument.class);
 		FindIterable<BsonDocument> resultado = usuarios.find(criterio);
 		Usuario usuario=null;
 		if (resultado.first()!=null) {
 			usuario=new UsuarioRegistrado();
-			usuario.setNombre(email);
-		} 
+			usuario.setNombre(username);
+		}
 		else{
 			throw new Exception("Usuario no encontrado");
 		}
-		conexion.close();*/
+		conexion.close();
+		/*
 		Usuario usuario = null;
 		usuario = new UsuarioRegistrado();
 		usuario.setNombre(username);
 		if(!usuario.getLogin().equals("aaa"))
-			throw new Exception("Error de prueba");
+			throw new Exception("Error de prueba");*/
 		return usuario;
 	}
 
