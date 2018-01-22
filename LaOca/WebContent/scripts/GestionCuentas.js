@@ -9,6 +9,7 @@ function registrar() {
 				index.setAttribute("style", "display:none");
 				juego.setAttribute("style", "display:block");
 				opciones.setAttribute("style", "display:none");
+				
 			}
 			else{
 				mensajeRegistro.innerHTML=respuesta.mensaje;
