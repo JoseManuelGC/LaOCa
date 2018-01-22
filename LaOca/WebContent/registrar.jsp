@@ -9,13 +9,12 @@
 	
 	JSONObject respuesta=new JSONObject();
 	try {
+		String username=jso.optString("username");
 		String email=jso.optString("email");
 		String pwd1=jso.optString("pwd1");
 		String pwd2=jso.optString("pwd2");
-		
-		comprobarCredenciales(email, pwd1, pwd2);
-		
-		Manager.get().registrar(email, pwd1);
+		comprobarCredenciales(username, email, pwd1, pwd2);
+		Manager.get().registrar(username, email, pwd1);
 		respuesta.put("result", "OK");
 	}
 	catch (Exception e) {
@@ -26,13 +25,17 @@
 %>
 
 <%!
-private void comprobarCredenciales(String email, String pwd1, String pwd2) throws Exception {
+private void comprobarCredenciales(String username, String email, String pwd1, String pwd2) throws Exception {
+	if (username.length()==0)
+		throw new Exception("El nombre de usuario no puede estar vacío");
+	if (username.indexOf("@")!=-1)
+		throw new Exception("El nombre de usuario no puede contener @");
 	if (email.length()==0)
-		throw new Exception("El email no puede ser vacío");
+		throw new Exception("El email no puede estar vacío");
 	if (!pwd1.equals(pwd2))
 		throw new Exception("Las contraseñas no coinciden");
 	if (pwd1.length()<4)
-		throw new Exception("La contraseña tiene que tener 4 caracteres por lo menos");
+		throw new Exception("La contraseña debe tener al menos 4 caracteres");
 }
 %>
 

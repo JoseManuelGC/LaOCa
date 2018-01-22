@@ -11,7 +11,7 @@ public class Pool {
 	private ConcurrentLinkedQueue<MongoClient> libres;
 	private ConcurrentLinkedQueue<MongoClient> usadas;
 	
-	Pool(int numeroDeConexiones) {
+	public Pool(int numeroDeConexiones) {
 		this.libres=new ConcurrentLinkedQueue<>();
 		this.usadas=new ConcurrentLinkedQueue<>();
 		for (int i=0; i<numeroDeConexiones; i++) {

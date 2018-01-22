@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.bson.BsonArray;
 import org.bson.BsonDocument;
+import org.bson.BsonInt32;
 import org.bson.BsonString;
 import org.bson.BsonValue;
 import org.bson.conversions.Bson;
@@ -79,36 +80,64 @@ public class DAOUsuario {
 	}
 
 	public static Usuario login(String username, String password) throws Exception {
-		MongoClient bd = MongoBroker.get().getConexionPrivilegiada();
-		MongoDatabase db= MongoBroker.get().getDatabase("oca", username, password);
-		BsonDocument criterio=new BsonDocument();
-		criterio.append("username", new BsonString(username));
-		MongoCollection<BsonDocument> usuarios= db.getCollection("usuarios", BsonDocument.class);
-		FindIterable<BsonDocument> resultado = usuarios.find(criterio);
-		Usuario usuario=null;
-		if (resultado.first()!=null) {
-			usuario=new UsuarioRegistrado();
-			usuario.setNombre(username);
+		Usuario user = new UsuarioRegistrado();
+		MongoClient connection = MongoBroker.get().getConnection();
+		MongoDatabase db = connection.getDatabase("oca");
+		if(db.getCollection("usuarios")==null)
+			db.createCollection("usuarios");
+		MongoCollection<BsonDocument> usuarios = db.getCollection("usuarios", BsonDocument.class);
+		BsonDocument criterio = new BsonDocument();
+		if(username.indexOf("@")==-1) 
+			criterio.append("username", new BsonString(username));
+		else 
+			criterio.append("email", new BsonString(username));		
+		FindIterable<BsonDocument> resultados = usuarios.find(criterio);
+		BsonDocument resultado = resultados.first();
+		if(resultado==null) {
+			connection.close();
+			throw new Exception("Nombre de usuario o contraseña no válidos");
 		}
-		else{
-			throw new Exception("Usuario no encontrado");
+		else {
+			if(!resultado.getString("password").getValue().equals(password)) {
+				connection.close();
+				throw new Exception("Nombre de usuario o contraseña no válidos");
+			}
 		}
-		conexion.close();
-		/*
-		Usuario usuario = null;
-		usuario = new UsuarioRegistrado();
-		usuario.setNombre(username);
-		if(!usuario.getLogin().equals("aaa"))
-			throw new Exception("Error de prueba");*/
-		return usuario;
+		connection.close();
+		return user;		
 	}
-
+	
+	public static Usuario registrar(String username, String email, String password) throws Exception {
+		Usuario user = new UsuarioRegistrado();
+		MongoClient connection = MongoBroker.get().getConnection();
+		MongoDatabase db = connection.getDatabase("oca");
+		if(db.getCollection("usuarios")==null)
+			db.createCollection("usuarios");
+		MongoCollection<BsonDocument> usuarios = db.getCollection("usuarios", BsonDocument.class);
+		BsonDocument criterioUsername = new BsonDocument();
+		criterioUsername.append("username", new BsonString(username));
+		BsonDocument criterioEmail = new BsonDocument();
+		criterioEmail.append("email", new BsonString(email));
+		FindIterable<BsonDocument> resultadoUsername = usuarios.find(criterioUsername);
+		FindIterable<BsonDocument> resultadoEmail = usuarios.find(criterioEmail);
+		if(resultadoUsername.first()!=null || resultadoEmail.first()!=null)
+			throw new Exception("Nombre de usuario o email en uso");
+		else {
+			BsonDocument usuario = new BsonDocument();
+			usuario.append("username", new BsonString(username));
+			usuario.append("email", new BsonString(email));
+			usuario.append("password", new BsonString(password));
+			usuario.append("victorias", new BsonInt32(0));
+			usuario.append("derrotas", new BsonInt32(0));
+			usuarios.insertOne(usuario);
+		}
+		connection.close();
+		return user;
+	}
+	
+	public static void cambiarPassword(String username, String passwordVieja, String passwordNueva) {
+		
+		
+		
+	}
 }
-
-
-
-
-
-
-
-

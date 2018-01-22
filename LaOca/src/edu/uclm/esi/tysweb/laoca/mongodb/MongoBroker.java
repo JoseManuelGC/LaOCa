@@ -16,28 +16,30 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import edu.uclm.esi.tysweb.laoca.dao.Pool;
+
 public class MongoBroker {
 	//private ConcurrentLinkedQueue<MongoClient> usadas, libres;
 	//private MongoDatabase db;
+	Pool pool;
 	
 	private MongoBroker() {
-		MongoClient mongoClient = new MongoClient("localhost", 27017);
-		this.db = mongoClient.getDatabase("oca");
+		this.pool = new Pool(50);
 		//MongoCredential credenciales=MongoCredential.createCredential("creadorDeUsuarios",	"admin", "creadorDeUsuarios".toCharArray());
 		//ServerAddress address=new ServerAddress("alarcosj.esi.uclm.es");
 		//ServerAddress address=new ServerAddress("localhost:27017");
 		//List<MongoCredential> lista=Arrays.asList(credenciales);
 		//this.conexionPrivilegiada=new MongoClient(address);
 		
-		this.usadas=new ConcurrentLinkedQueue<>();
-		this.libres=new ConcurrentLinkedQueue<>();
+		//this.usadas=new ConcurrentLinkedQueue<>();
+		//this.libres=new ConcurrentLinkedQueue<>();
 		
 		//credenciales=MongoCredential.createCredential("jugador", "MACARIO", "jugador".toCharArray());
 		//lista=Arrays.asList(credenciales);
-		for (int i=0; i<10; i++) {
+		/*for (int i=0; i<10; i++) {
 			MongoClient conexion=new MongoClient(address);
 			this.libres.add(conexion);
-		}
+		}*/
 		
 	}
 	
@@ -75,24 +77,11 @@ public class MongoBroker {
 		return MongoBrokerHolder.singleton;
 	}
 
-	public MongoDatabase getDatabase(String databaseName) {
-		return conexionPrivilegiada.getDatabase(databaseName);
-	}
-
-	public void close() {
-		this.conexionPrivilegiada.close();
-	}
-
-	public MongoClient getDatabase(String databaseName, String email, String pwd) throws Exception {
-		//MongoCredential credenciales=MongoCredential.createCredential(email, databaseName, pwd.toCharArray());
-		//ServerAddress address=new ServerAddress("alarcosj.esi.uclm.es");
-		ServerAddress address=new ServerAddress("localhost:27017");
-		//List<MongoCredential> lista=Arrays.asList(credenciales);
-		return new MongoClient(address);
-		return this.db;
+	public void close(MongoClient conexion) {
+		this.pool.close(conexion);
 	}
 	
-	public MongoClient getConexionPrivilegiada() {
-		return this.conexionPrivilegiada;
+	public MongoClient getConnection() throws Exception {
+		return pool.getConnection();
 	}
 }

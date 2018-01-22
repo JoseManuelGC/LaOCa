@@ -71,14 +71,16 @@ public class Manager {
 		return ManagerHolder.singleton;
 	}
 	
-	public void registrar(String email, String pwd) throws Exception {
-		Usuario usuario=new UsuarioRegistrado();
-		usuario.setNombre(email);
-		usuario.insert(pwd);
+	public Usuario registrar(String username, String email, String password) throws Exception {
+		return UsuarioRegistrado.register(username, email, password);
 	}
 	
 	public Usuario login(String username, String password) throws Exception {
 		return UsuarioRegistrado.login(username, password);
+	}
+	
+	public void cambiarPassword(String username, String passwordVieja, String passwordNueva) {
+		
 	}
 
 	public JSONObject tirarDado(int idPartida, String jugador, int dado) throws Exception {

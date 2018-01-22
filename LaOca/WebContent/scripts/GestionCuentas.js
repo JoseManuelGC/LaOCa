@@ -11,7 +11,7 @@ function registrar() {
 				opciones.setAttribute("style", "display:none");
 			}
 			else{
-				mensajeRegistro.innerHTML=respuesta.mensaje;
+				feedbackRegister.setAttribute("style", "display:visible");
 			}
 		}
 	};	
@@ -19,8 +19,6 @@ function registrar() {
 		username: usernameRegister.value, email : emailRegister.value, pwd1 : passwordRegister1.value, pwd2 : passwordRegister2.value 
 	};
 	request.send("p=" + JSON.stringify(p));
-	index.setAttribute("style", "display:none");
-	juego.setAttribute("style", "display:visible");
 }
 
 function login() {
@@ -43,8 +41,6 @@ function login() {
 		username : usernameLogin.value, password : passwordLogin.value 
 	};
 	request.send("p=" + JSON.stringify(p));
-	//index.setAttibrute("style", "display:none");
-	//juego.setAttribute("style", "display:visible");
 }
 
 function login() {
@@ -69,6 +65,14 @@ function login() {
 	//index.setAttibrute("style", "display:none");
 	//juego.setAttribute("style", "display:visible");
 }
+
+function cambiarPassword() {
+	
+	
+	
+	
+}
+
 
 
 function estaConectado() {
