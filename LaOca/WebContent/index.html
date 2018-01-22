@@ -2,35 +2,250 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Insert title here</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
+	<title>La Oca</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<style type="text/css">
+		#button-login{
+			background-color:#FF7171;
+		}
+	</style>
 </head>
 <body>
-	<div class="container" id="divRegistro">
+ <div class="container-fluid">
+  <div class="row" id="index">
+  <h1 align="center">
+  La Oca
+  </h1>
+  <div class="col-md-3">
+  </div>
+   <div class="col-md-6">
+    <div class="panel panel-login">
+     <div class="panel-heading">
+      <div class="row">
+       <div class="col-xs-4" id="button-login" align="center">
+       	<a href="javascript:cambiar()" class="active" id="login-form-link">Iniciar sesión</a>
+       </div>
+       <div class="col-xs-4" id="button-register" align="center">
+       	<a href="javascript:cambiar()" id="register-form-link">Registro</a>
+       </div>
+       <div class="col-xs-4" id="button-guest" align="center">
+       	<a href="javascript:cambiar()" id="guest-form-link">Jugar como invitado</a>
+       </div>
+      </div>
+     </div>
+     <div class="panel-body">
 		<div class="row">
-			<div class="col-xs-12">
+			<div class="col-lg-12">
+				<form id="login-form" action="" method="post" role="form" style="display: block;">
+					<div class="form-group">
+						<input type="text" name="usernameLogin" id="usernameLogin" tabindex="1" class="form-control" placeholder="Usuario o correo electrónico" value="">
+					</div>
+					<div class="form-group">
+						<input type="password" name="passwordLogin" id="passwordLogin" tabindex="2" class="form-control" placeholder="Contraseña">
+					</div>
+					<div class="form-group text-center">
+						<input type="checkbox" tabindex="3" class="" name="remember" id="remember">
+						<label for="remember"> Recuérdame</label>
+					</div>
+					<div class="alert alert-danger" id="feedbackLogin" style="display:none">
+  						<strong>¡Error!</strong> Usuario o contraseña desconocidos
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<div class="col-sm-6 col-sm-offset-3">
+								<input type="button" onclick="login()" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-primary" value="Iniciar sesión">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="text-center">
+									<a href="" tabindex="5" class="forgot-password">¿Ha olvidado su contraseña?</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<form id="register-form" action="" method="post" role="form" style="display: none;">
+					<div class="form-group">
+						<input type="text" name="usernameRegister" id="usernameRegister" tabindex="1" class="form-control" placeholder="Usuario" value="">
+					</div>
+					<div class="form-group">
+						<input type="email" name="emailRegister" id="emailRegister" tabindex="1" class="form-control" placeholder="Dirección de correo" value="">
+					</div>
+					<div class="form-group">
+						<input type="password" name="passwordRegister1" id="passwordRegister1" tabindex="2" class="form-control" placeholder="Contraseña">
+					</div>
+					<div class="form-group">
+						<input type="password" name="passwordRegister2" id="passwordRegister2" tabindex="2" class="form-control" placeholder="Confirmar contraseña">
+					</div>
+					<div class="form-group">
+						<div class="row">
+							<div class="col-sm-6 col-sm-offset-3">
+								<input type="button" onclick="registrar()" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-primary" value="Registrarse">
+							</div>
+						</div>
+					</div>
+				</form>
+				<form id="guest-form" action="" method="post" role="form" style="display:none;">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-sm-6 col-sm-offset-3">
+								<input type="button" onclick="registrar()" name="guest-submit" id="guest-submit" tabindex="4" class="form-control btn btn-primary" value="Jugar como invitado">
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+   </div>
+  </div>
+  <div class="col-md-3">
+  </div>
+ </div>
+ <div class="row">
+ <br>
+  <div class="container-fluid" id="juego" style="display:none">
+   <div class="col-md-3">
+    <div class="row">
+    <div class="col-md-12" id="confirmar">
+    Confirma tu cuenta con el código recibido por email
+    <input type="text" name="confirmar" id="confirmar" class="form-control" placeholder="Código de confirmación" value="">
+    <input type="button" onclick="confirmar()" name="button-confirmar" id="button-confirmar" class="form-control btn btn-primary" value="Verificar">
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12" id="opciones">
+    	<div class="row">
+    	<div class="col-md-3">
+    	Jugadores:
+    	</div>  
+    	<div class="col-md-3">
+    	<input type="number" name="numeroJugadores" id="numeroJugadores" class="form-control" placeholder="Nº jugadores" value=2 min="2" max="6">
+    	</div>
+    	<div class="col-md-5">
+    	<input type="button" onclick="crearPartida()" name="button-confirmar" id="button-confirmar" class="form-control btn btn-primary" value="Nueva partida">
+    	</div>
+    	</div>
+    	<br>
+    	<div class="row">
+    	<div class="col-md-5 col-md-offset-6">
+    	<input type="button" onclick="unirse()" name="button-confirmar" id="button-confirmar" class="form-control btn btn-primary" value="Unirse">
+    	</div>
+   		</div>
+   	</div>
+   </div>
+   </div>
+   <div class="col-md-6">
+   <div class="row">
+    <svg id="svgTablero" width="650" height="650" style="background-color:grey">
+    </svg>
+   </div>
+   <div class="row">
+    <button align="center" type="button" class="btn btn-primary" id="btnDado" onclick="tirarDado()">
+	 Dado
+	</button>
+   </div> 
+    
+   </div>
+   <div class="col-md-3">
+   Chat
+   </div>
+  </div>
+ </div>
+</div>
+
+
+<script>
+$('input').on('keypress', function (event) {
+    var regex = new RegExp("^[a-zA-Z0-9]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }
+});
+
+function cambiar(){
+$(function() {
+    $('#login-form-link').click(function(e) {
+    	$("#button-login").css("background-color", "#FF7171");
+    	$("#button-register").css("background-color", "white");
+    	$("#button-guest").css("background-color", "white");
+		$("#login-form").delay(100).fadeIn(100);
+ 		$("#register-form").fadeOut(100);
+		$('#register-form-link').removeClass('active');
+ 		$("#guest-form").fadeOut(100);
+		$('#guest-form-link').removeClass('active');
+		$(this).addClass('active');
+		e.preventDefault();
+	});
+	$('#register-form-link').click(function(e) {
+		$("#button-login").css("background-color", "white");
+		$("#button-register").css("background-color", "#FF7171");
+		$("#button-guest").css("background-color", "white");
+		$("#register-form").delay(100).fadeIn(100);
+ 		$("#login-form").fadeOut(100);
+		$('#login-form-link').removeClass('active');
+ 		$("#guest-form").fadeOut(100);
+		$('#guest-form-link').removeClass('active');
+		$(this).addClass('active');
+		e.preventDefault();
+	});
+	$('#guest-form-link').click(function(e) {
+		$("#button-login").css("background-color", "white");
+		$("#button-register").css("background-color", "white");
+		$("#button-guest").css("background-color", "#FF7171");
+		$("#guest-form").delay(100).fadeIn(100);
+ 		$("#login-form").fadeOut(100);
+		$('#login-form-link').removeClass('active');
+ 		$("#register-form").fadeOut(100);
+		$('#register-form-link').removeClass('active');
+		$(this).addClass('active');
+		e.preventDefault();
+	});
+});	
+}
+
+</script>
+	<!--div class="container" id="divRegistro" >
+      <div class="row">
+			<div class="col-xs-12" >
 			<div>
       		<form>
-      			<div class="form-group">
-      				<div class="col-lg-2">
-      				<img class="img-responsive" src="logooca.jpg" alt="Chania">
-      				</div>
-      				<input type="text" placeholder="Escribir Correo Electrónico" id="email" size=40><br>
-      				<input type="password" placeholder="Escribir Contraseña" id="pwd1" size=40><br>
-      				<input type="password" placeholder="Repite Contraseña" id="pwd2" size=40><br>
+      			<div class="form-group" style="color:#0000FF">
+      				<input type="text" placeholder="Escribir Nombre de Usuario" id="username" size=40><br>
+      				<input type="text" placeholder="Escribir Correo Electrónico" id="emailRegistro" size=40><br>
+      				<input type="password" placeholder="Escribir Contraseña" id="pwdRegistro1" size=40><br>
+      				<input type="password" placeholder="Repite Contraseña" id="pwdRegistro2" size=40><br>
       				<button type="submit" onclick="registrar()" id="btnRegistrar" class="btn btn-primary">Registrarse</button>
       				<span id="mensajeRegistro"></span>
       			</div>
       		</form>
       		</div>
-				<!--input type="text" placeholder="Correo electrónico" id="email"><br>
-				<input type="password" placeholder="Contraseña" id="pwd1"><br>
-				<input type="password" placeholder="Repite contraseña" id="pwd2"><br>
-				<button onclick="registrar()" id="btnRegistrar">Registrarse</button>
-				<span id="mensajeRegistro"></span-->
+				
 			</div> 
 		</div>
 	</div>
+	
+	<div class="container" id="divLogin">
+      <div class="row">
+		<div class="col-xs-12">
+		 <div>
+      	  <form>
+			<div class="form-group">
+      		 <input type="text" placeholder="Escribir Correo Electrónico" id="emailLogin" size=40><br>
+      		 <input type="password" placeholder="Escribir Contraseña" id="pwdLogin" size=40><br>
+      		 <button type="submit" onclick="login()" id="btnLogin" class="btn btn-primary">Iniciar sesión</button>
+      		 <span id="mensajeLogin"></span>
+      		</div>
+      	</form>
+       </div>
+	  </div> 
+	 </div>
+	</div>	
 
 	<div class="container" style="display:none">
 		<div class="row">
@@ -73,17 +288,53 @@
 	</div>
 	
 	
+	<div class="container">
+    <div class="col-md-6">
+    <div id="logbox">
+      <form id="signup" method="post" action="/signup">
+        <h1>create an account</h1>
+        <input name="user[name]" type="text" placeholder="What's your username?" pattern="^[\w]{3,16}$" autofocus="autofocus" required="required" class="input pass"/>
+        <input name="user[password]" type="password" placeholder="Choose a password" required="required" class="input pass"/>
+        <input name="user[password2]" type="password" placeholder="Confirm password" required="required" class="input pass"/>
+        <input name="user[email]" type="email" placeholder="Email address" class="input pass"/>
+        <input type="submit" value="Sign me up!" class="inputButton"/>
+        <div class="text-center">
+            already have an account? <a href="#" id="login_id">login</a>
+        </div>
+      </form>
+    </div>
+   </div>
+    
+   <div class="col-md-6">
+    <div id="logbox">
+      <form id="signup" method="post" action="/signup">
+        <h1>account login</h1>
+        <input name="user[email]" type="email" placeholder="enter your email" class="input pass"/>
+        <input name="user[password]" type="password" placeholder="enter your password" required="required" class="input pass"/>
+        <input type="submit" value="Sign me in!" class="inputButton"/>
+        <div class="text-center"">
+                    <a href="#" id="">create an account</a> - <a href="#" id="">forgot password</a>
+                </div>
+      </form>
+    </div>
+    </div>
+  </div-->
+	
+	
+	
 	<script>
 	</script>
 	
 	<script src="scripts/partidas.js"></script>
 	<script src="scripts/tablero.js"></script>
 	<script src="scripts/GestionCuentas.js"></script>
-	<script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	
+	<!-- script>
 	
 	if (localStorage.nombre!=undefined)
 		document.getElementById("nombre").value=localStorage.nombre;	
-	
-	</script>
+	</script-->
 </body>
 </html>

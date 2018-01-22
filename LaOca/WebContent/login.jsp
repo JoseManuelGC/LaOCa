@@ -9,10 +9,9 @@
 	
 	JSONObject respuesta=new JSONObject();
 	try {
-		String email=jso.optString("email");
-		String pwd=jso.optString("pwd");
-		
-		Usuario usuario=Manager.get().login(email, pwd);
+		String username=jso.optString("username");
+		String password=jso.optString("password");
+		Usuario usuario=Manager.get().login(username, password);
 		session.setAttribute("usuario", usuario);
 		respuesta.put("result", "OK");
 	}

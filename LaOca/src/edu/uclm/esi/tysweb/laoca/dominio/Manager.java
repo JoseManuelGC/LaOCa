@@ -77,8 +77,8 @@ public class Manager {
 		usuario.insert(pwd);
 	}
 	
-	public Usuario login(String email, String pwd) throws Exception {
-		return UsuarioRegistrado.login(email, pwd);
+	public Usuario login(String username, String password) throws Exception {
+		return UsuarioRegistrado.login(username, password);
 	}
 
 	public JSONObject tirarDado(int idPartida, String jugador, int dado) throws Exception {

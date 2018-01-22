@@ -7,7 +7,7 @@ public class UsuarioRegistrado extends Usuario {
 		super();
 	}
 
-	public static Usuario login(String email, String pwd) throws Exception {
-		return DAOUsuario.login(email, pwd);
+	public static Usuario login(String username, String password) throws Exception {
+		return DAOUsuario.login(username, password);
 	}
 }

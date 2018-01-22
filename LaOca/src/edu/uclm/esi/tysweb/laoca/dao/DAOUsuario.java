@@ -78,7 +78,8 @@ public class DAOUsuario {
 		return new BsonString(hashtext);
 	}
 
-	public static Usuario login(String email, String pwd) throws Exception {
+	public static Usuario login(String username, String password) throws Exception {
+		/*
 		MongoClient conexion=MongoBroker.get().getDatabase("MACARIO", email, pwd);
 		
 		BsonDocument criterio=new BsonDocument();
@@ -91,7 +92,15 @@ public class DAOUsuario {
 			usuario=new UsuarioRegistrado();
 			usuario.setNombre(email);
 		} 
-		conexion.close();
+		else{
+			throw new Exception("Usuario no encontrado");
+		}
+		conexion.close();*/
+		Usuario usuario = null;
+		usuario = new UsuarioRegistrado();
+		usuario.setNombre(username);
+		if(!usuario.getLogin().equals("aaa"))
+			throw new Exception("Error de prueba");
 		return usuario;
 	}
 
