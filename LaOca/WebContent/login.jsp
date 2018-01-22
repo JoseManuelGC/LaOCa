@@ -14,6 +14,7 @@
 		Usuario usuario=Manager.get().login(username, password);
 		session.setAttribute("usuario", usuario);
 		respuesta.put("result", "OK");
+		
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");

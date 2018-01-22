@@ -19,6 +19,7 @@ public class Usuario {
 		//if (!DAOUsuario.existe(nombreJugador))
 		//	throw new Exception("Usuario no registrado");
 		this.login=nombreJugador;
+		
 	}
 
 	public Usuario() {
