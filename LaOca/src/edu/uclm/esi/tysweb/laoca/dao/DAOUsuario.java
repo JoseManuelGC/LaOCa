@@ -95,7 +95,6 @@ public class DAOUsuario {
 		else{
 			throw new Exception("Usuario no encontrado");
 		}
-		
 		conexion.close();*/
 		Usuario usuario = null;
 		usuario = new UsuarioRegistrado();

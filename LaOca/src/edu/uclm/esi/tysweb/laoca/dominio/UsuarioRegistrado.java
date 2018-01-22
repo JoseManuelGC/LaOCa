@@ -9,6 +9,5 @@ public class UsuarioRegistrado extends Usuario {
 
 	public static Usuario login(String username, String password) throws Exception {
 		return DAOUsuario.login(username, password);
-		
 	}
 }

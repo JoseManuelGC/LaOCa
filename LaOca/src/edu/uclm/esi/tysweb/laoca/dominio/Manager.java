@@ -92,7 +92,6 @@ public class Manager {
 		}
 		return mensaje;
 	}
-	
 
 	private void terminar(Partida partida) {
 		partida.terminar();
