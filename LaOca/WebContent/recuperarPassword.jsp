@@ -9,16 +9,22 @@
 	
 	JSONObject respuesta=new JSONObject();
 	try {
-		String username=jso.optString("username");
-		String password=jso.optString("password");
-		Usuario usuario=Manager.get().login(username, password);
-		session.setAttribute("usuario", usuario);
+		String email=jso.optString("email");
+		comprobarEmail(email);
+		Manager.get().recuperar(email);
 		respuesta.put("result", "OK");
-		respuesta.put("username", usuario.getLogin());
+		respuesta.put("mensaje", "Correo de recuperación enviado");
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");
 		respuesta.put("mensaje", e.getMessage());
 	}
 	out.println(respuesta.toString());
+%>
+
+<%!
+private void comprobarEmail(String email) throws Exception {
+	if (email.length()==0)
+		throw new Exception("Debe introducir el correo electrónico");
+}
 %>

@@ -3,8 +3,15 @@ package edu.uclm.esi.tysweb.laoca.dominio;
 import edu.uclm.esi.tysweb.laoca.dao.DAOUsuario;
 
 public class UsuarioRegistrado extends Usuario {
-	public UsuarioRegistrado() {
-		super();
+	private String email;
+	private int victorias;
+	private int derrotas;
+	
+	public UsuarioRegistrado(String username, String email, int victorias, int derrotas) throws Exception {
+		super(username);
+		this.email = email;
+		this.victorias = victorias;
+		this.derrotas = derrotas;
 	}
 
 	public static Usuario login(String username, String password) throws Exception {
@@ -15,7 +22,19 @@ public class UsuarioRegistrado extends Usuario {
 		return DAOUsuario.registrar(username, email, password);
 	}
 	
-	public static void cambiarPassword(String username, String passwordVieja, String passwordNueva) {
+	public static void cambiarPassword(String username, String passwordActual, String passwordNueva) throws Exception {
+		DAOUsuario.cambiarPassword(username, passwordActual, passwordNueva);
+	}
+
+	public static void recuperar(String email) throws Exception {
+		DAOUsuario.recuperar(email);
 		
 	}
+
+	public static void actualizarPassword(String password, String token) throws Exception{
+		DAOUsuario.actualizar(password, token);
+		
+	}
+	
+	
 }

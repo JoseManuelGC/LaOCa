@@ -16,8 +16,6 @@ public class Usuario {
 	private int turnosSinTirar;
 
 	public Usuario(String nombreJugador) throws Exception {
-		//if (!DAOUsuario.existe(nombreJugador))
-		//	throw new Exception("Usuario no registrado");
 		this.login=nombreJugador;
 	}
 

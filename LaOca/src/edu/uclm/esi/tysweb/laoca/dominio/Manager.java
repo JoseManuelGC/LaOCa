@@ -72,15 +72,27 @@ public class Manager {
 	}
 	
 	public Usuario registrar(String username, String email, String password) throws Exception {
-		return UsuarioRegistrado.register(username, email, password);
+		Usuario u = UsuarioRegistrado.register(username, email, password);
+		usuarios.put(u.getLogin(), u);
+		return u;
 	}
 	
 	public Usuario login(String username, String password) throws Exception {
-		return UsuarioRegistrado.login(username, password);
+		Usuario u = UsuarioRegistrado.login(username, password);
+		usuarios.put(u.getLogin(), u);
+		return u;
 	}
 	
-	public void cambiarPassword(String username, String passwordVieja, String passwordNueva) {
-		
+	public void cambiarPassword(String username, String passwordActual, String passwordNueva) throws Exception{
+		UsuarioRegistrado.cambiarPassword(username, passwordActual, passwordNueva);
+	}
+	
+	public void actualizarPassword(String password, String token) throws Exception{
+		UsuarioRegistrado.actualizarPassword(password, token);
+	}
+	
+	public void recuperar(String email) throws Exception{
+		UsuarioRegistrado.recuperar(email);
 	}
 
 	public JSONObject tirarDado(int idPartida, String jugador, int dado) throws Exception {
@@ -101,11 +113,4 @@ public class Manager {
 	}
 	
 }
-
-
-
-
-
-
-
 

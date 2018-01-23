@@ -31,7 +31,7 @@ function login() {
 			if (respuesta.result=="OK"){
 				index.setAttribute("style", "display:none");
 				juego.setAttribute("style", "display:block");
-				confirmar.setAttribute("style", "display:none");
+				sessionStorage.setItem("username", respuesta.username);
 			}	
 			else
 				feedbackLogin.setAttribute("style", "display:visible");
@@ -43,37 +43,80 @@ function login() {
 	request.send("p=" + JSON.stringify(p));
 }
 
-function login() {
+function cambiarPassword() {
 	var request = new XMLHttpRequest();	
-	request.open("post", "login.jsp");
+	request.open("post", "cambiarPassword.jsp");
 	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	request.onreadystatechange=function() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK"){
-				index.setAttribute("style", "display:none");
-				juego.setAttribute("style", "display:block");
+				alert(respuesta.mensaje);	
 			}	
-			else
-				feedbackLogin.setAttribute("style", "display:visible");
+			else{
+				alert(respuesta.mensaje);
+			}
 		}
 	};
 	var p = {
-		username : usernameLogin.value, password : passwordLogin.value 
+		username : sessionStorage.getItem('username'), passwordActual : passwordActual.value, passwordNueva1 : passwordNueva1.value, passwordNueva2 : passwordNueva2.value};
+	request.send("p=" + JSON.stringify(p));	
+}
+
+function recuperacion() {
+	var request = new XMLHttpRequest();	
+	request.open("post", "recuperarPassword.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK"){
+				alert(respuesta.mensaje);	
+			}	
+			else{
+				alert(respuesta.mensaje);
+			}
+		}
 	};
-	request.send("p=" + JSON.stringify(p));
-	//index.setAttibrute("style", "display:none");
-	//juego.setAttribute("style", "display:visible");
+	var p = {
+		email : emailRecuperacion.value};
+	request.send("p=" + JSON.stringify(p));	
 }
 
-function cambiarPassword() {
-	
-	
-	
-	
+function actualizarPassword() {
+	var request = new XMLHttpRequest();	
+	request.open("post", "actualizarPassword.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK"){
+				alert(respuesta.mensaje);	
+			}	
+			else{
+				alert(respuesta.mensaje);	
+			}
+		}
+	};
+	var get = getGET();
+	var token = get['token'];
+	var p = {
+		passwordNueva1: passwordRecuperar1.value, passwordNueva2: passwordRecuperar2.value, token : token};
+	request.send("p=" + JSON.stringify(p));	
 }
 
+function getGET(){
+   var loc = document.location.href;
+   var getString = loc.split('?')[1];
+   var GET = getString.split('&');
+   var get = {};//this object will be filled with the key-value pairs and returned.
 
+   for(var i = 0, l = GET.length; i < l; i++){
+      var tmp = GET[i].split('=');
+      get[tmp[0]] = unescape(decodeURI(tmp[1]));
+   }
+   return get;
+}
 
 function estaConectado() {
 	var request = new XMLHttpRequest();	
@@ -87,5 +130,5 @@ function estaConectado() {
 			}
 		}
 	};
-	request.send();	
+	request.send();		
 }
