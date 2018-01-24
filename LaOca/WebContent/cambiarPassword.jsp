@@ -36,6 +36,6 @@ private void comprobarPassword(String passwordActual, String passwordNueva1, Str
 	if (!passwordNueva1.equals(passwordNueva2))
 		throw new Exception("Las contraseñas no coinciden");
 	if (passwordActual.equals(passwordNueva1))
-		throw new Exception("Debe usar una contraseña diferente");
+		throw new Exception("Debe usar una contraseña nueva");
 }
 %>

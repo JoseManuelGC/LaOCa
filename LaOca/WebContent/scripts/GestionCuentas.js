@@ -11,7 +11,8 @@ function registrar() {
 				opciones.setAttribute("style", "display:none");
 			}
 			else{
-				feedbackRegister.setAttribute("style", "display:visible");
+				document.getElementById("feedbackRegisterText").innerHTML = respuesta.mensaje;
+				feedbackRegister.setAttribute("style", "display:block");
 			}
 		}
 	};	
@@ -33,8 +34,10 @@ function login() {
 				juego.setAttribute("style", "display:block");
 				sessionStorage.setItem("username", respuesta.username);
 			}	
-			else
-				feedbackLogin.setAttribute("style", "display:visible");
+			else{
+				document.getElementById("feedbackLoginText").innerHTML = respuesta.mensaje;
+				feedbackLogin.setAttribute("style", "display:block");
+			}
 		}
 	};
 	var p = {
@@ -51,10 +54,16 @@ function cambiarPassword() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK"){
-				alert(respuesta.mensaje);	
+				$('#feedbackCambiar').removeClass('alert-danger');
+				$('#feedbackCambiar').addClass('alert-success');
+				document.getElementById("feedbackCambiarText").innerHTML = respuesta.mensaje;
+				feedbackCambiar.setAttribute("style", "display:block");	
 			}	
 			else{
-				alert(respuesta.mensaje);
+				$('#feedbackCambiar').removeClass('alert-success');
+				$('#feedbackCambiar').addClass('alert-danger');
+				document.getElementById("feedbackCambiarText").innerHTML = respuesta.mensaje;
+				feedbackCambiar.setAttribute("style", "display:block");
 			}
 		}
 	};
@@ -64,17 +73,25 @@ function cambiarPassword() {
 }
 
 function recuperacion() {
+	cargando.setAttribute("style", "display:block");
 	var request = new XMLHttpRequest();	
 	request.open("post", "recuperarPassword.jsp");
 	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	request.onreadystatechange=function() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
+			cargando.setAttribute("style", "display:none");
 			if (respuesta.result=="OK"){
-				alert(respuesta.mensaje);	
+				$('#feedbackRecuperacion').removeClass('alert-danger');
+				$('#feedbackRecuperacion').addClass('alert-success');
+				document.getElementById("feedbackRecuperacionText").innerHTML = respuesta.mensaje;
+				feedbackRecuperacion.setAttribute("style", "display:block");
 			}	
 			else{
-				alert(respuesta.mensaje);
+				$('#feedbackRecuperacion').removeClass('alert-success');
+				$('#feedbackRecuperacion').addClass('alert-danger');
+				document.getElementById("feedbackRecuperacionText").innerHTML = respuesta.mensaje;
+				feedbackRecuperacion.setAttribute("style", "display:block");
 			}
 		}
 	};
@@ -91,30 +108,50 @@ function actualizarPassword() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK"){
-				alert(respuesta.mensaje);	
+				$('#feedbackRecuperar').removeClass('alert-danger');
+				$('#feedbackRecuperar').addClass('alert-success');
+				document.getElementById("feedbackRecuperarText").innerHTML = respuesta.mensaje;
+				feedbackRecuperar.setAttribute("style", "display:block");	
 			}	
 			else{
-				alert(respuesta.mensaje);	
+				$('#feedbackRecuperar').removeClass('alert-success');
+				$('#feedbackRecuperar').addClass('alert-danger');
+				document.getElementById("feedbackRecuperarText").innerHTML = respuesta.mensaje;
+				feedbackRecuperar.setAttribute("style", "display:block");
 			}
 		}
 	};
 	var get = getGET();
 	var token = get['token'];
-	var p = {
-		passwordNueva1: passwordRecuperar1.value, passwordNueva2: passwordRecuperar2.value, token : token};
-	request.send("p=" + JSON.stringify(p));	
+	if(token!="error"){
+		var p = {
+				passwordNueva1: passwordRecuperar1.value, passwordNueva2: passwordRecuperar2.value, token : token};
+			request.send("p=" + JSON.stringify(p));
+	}
+	else{
+		$('#feedbackRecuperar').removeClass('alert-success');
+		$('#feedbackRecuperar').addClass('alert-danger');
+		document.getElementById("feedbackRecuperarText").innerHTML = "El token no es válido";
+		feedbackRecuperar.setAttribute("style", "display:block");
+	}
+		
+		
 }
 
 function getGET(){
-   var loc = document.location.href;
-   var getString = loc.split('?')[1];
-   var GET = getString.split('&');
-   var get = {};//this object will be filled with the key-value pairs and returned.
-
-   for(var i = 0, l = GET.length; i < l; i++){
-      var tmp = GET[i].split('=');
-      get[tmp[0]] = unescape(decodeURI(tmp[1]));
-   }
+	var get = {};
+	try{
+	   var loc = document.location.href;
+	   var getString = loc.split('?')[1];
+	   var GET = getString.split('&');
+	   for(var i = 0, l = GET.length; i < l; i++){
+	      var tmp = GET[i].split('=');
+	      get[tmp[0]] = unescape(decodeURI(tmp[1]));
+	   }
+	}
+	catch(err){
+		get["token"] = "error";
+	}
    return get;
 }
 

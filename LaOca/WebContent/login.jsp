@@ -11,6 +11,7 @@
 	try {
 		String username=jso.optString("username");
 		String password=jso.optString("password");
+		comprobarCampos(username, password);
 		Usuario usuario=Manager.get().login(username, password);
 		session.setAttribute("usuario", usuario);
 		respuesta.put("result", "OK");
@@ -21,4 +22,11 @@
 		respuesta.put("mensaje", e.getMessage());
 	}
 	out.println(respuesta.toString());
+%>
+
+<%!
+private void comprobarCampos(String username, String password) throws Exception {
+	if (username.length()==0 || password.length()==0)
+		throw new Exception("Debe rellenar todos los campos");	
+}
 %>

@@ -262,7 +262,7 @@ public class DAOUsuario {
 		FindIterable<BsonDocument> resultados = recuperaciones.find(criterio);
 		BsonDocument resultado = resultados.first();
 		if(resultado==null)
-			throw new Exception("El token no es válido.");
+			throw new Exception("El token no es válido");
 		else {
 			long limite = resultado.getDateTime("expiracion").getValue();
 			Calendar ahora = Calendar.getInstance();

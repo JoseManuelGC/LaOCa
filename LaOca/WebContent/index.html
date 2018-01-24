@@ -8,6 +8,21 @@
 		#button-login{
 			background-color:#FF7171;
 		}
+		.loader {
+		    border: 4px solid #f3f3f3; /* Light grey */
+		    border-top: 4px solid #3498db; /* Blue */
+		    border-radius: 50%;
+		    width: 30px;
+		    height: 30px;
+		    animation: spin 2s linear infinite;
+    		padding-top: 2px;
+		    
+		}
+
+		@keyframes spin {
+    		0% { transform: rotate(0deg); }
+    		100% { transform: rotate(360deg); }
+		}
 	</style>
 </head>
 <body>
@@ -51,7 +66,7 @@
 						<label for="remember"> Recuérdame</label>
 					</div>
 					<div class="alert alert-danger" id="feedbackLogin" style="display:none">
-  						<strong>¡Error!</strong> Usuario o contraseña desconocidos
+					<p id="feedbackLoginText"></p>
 					</div>
 					<div class="form-group">
 						<div class="row">
@@ -75,7 +90,7 @@
 						<input type="password" name="passwordRegister2" id="passwordRegister2" tabindex="2" class="form-control" placeholder="Confirmar contraseña">
 					</div>
 					<div class="alert alert-danger" id="feedbackRegister" style="display:none">
-  						<strong>¡Error!</strong> Usuario ya existente
+						<p id="feedbackRegisterText"></p>
 					</div>
 					<div class="form-group">
 						<div class="row">
@@ -98,10 +113,16 @@
 					<div class="form-group">
 						<input type="email" name="emailRecuperacion" id="emailRecuperacion" tabindex="2" class="form-control" placeholder="Correo electrónico">
 					</div>
+					<div class="alert alert-danger" id="feedbackRecuperacion" style="display:none">
+						<p id="feedbackRecuperacionText"></p>
+					</div>
 					<div class="form-group">
-						<div class="row">
+						<div class="row">		
 							<div class="col-sm-6 col-sm-offset-3">
 								<input type="button" onclick="recuperacion()" name="recuperar-submit" id="recuperar-submit" tabindex="4" class="form-control btn btn-primary" value="Enviar enlace de recuperación">
+							</div>
+							<div class="col-sm-1">
+								<div class="loader" id="cargando" style="display:none"></div>
 							</div>
 						</div>
 					</div>
@@ -133,6 +154,9 @@
 		<input type="password" name="passwordNueva1" id="passwordNueva1" class="form-control" placeholder="Nueva contraseña" value="">
 		<input type="password" name="passwordNueva2" id="passwordNueva2" class="form-control" placeholder="Confirmar contraseña" value="">
 		<input type="button" onclick="cambiarPassword()" name="button-cambiar-password" id="button-cambiar-password" class="form-control btn btn-primary" value="Cambiar contraseña">
+		<div class="alert alert-danger" id="feedbackCambiar" style="display:none">
+			<p id="feedbackCambiarText"></p>
+		</div>
       </div>
     </div>
     <div class="panel panel-default">
