@@ -102,10 +102,6 @@ public class Partida {
 			jugador.setTurnosSinTirar(destino.getTurnosSinTirar());
 		}
 		result.put("jugadorConElTurno", pasarTurno(conservarTurno));
-		JSONObject jso2=new JSONObject();
-		jso2.put("tipo", "TUTURNO");		
-		getJugadorConElTurno().enviar(jso2);
-		return result;
 	}
 
 	private String pasarTurno(boolean conservarTurno) {
