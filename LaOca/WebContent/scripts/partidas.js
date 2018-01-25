@@ -8,7 +8,6 @@ function crearPartida() {
 			if (respuesta.result=="OK") {
 				divMensajes.innerHTML=respuesta.mensaje;
 				conectarWebSocket();
-				//localStorage.nombre=document.getElementById("nombre").value;
 			} else {
 				divMensajes.innerHTML= respuesta.mensaje;
 			}				
@@ -28,8 +27,8 @@ function unirse() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK") {
+				divMensajes.innerHTML=respuesta.mensaje;
 				conectarWebSocket();
-				localStorage.nombre=document.getElementById("nombre").value;
 			} else {
 				divMensajes.innerHTML="Error: " + respuesta.mensaje;
 			}
@@ -50,8 +49,7 @@ function conectarWebSocket() {
 		addMensaje("Websocket conectado");
 		var tablero=new Tablero();
 		tablero.dibujar(svgTablero);
-	}
-	
+	}	
 	ws.onmessage = function(datos) {
 		var mensaje=datos.data;
 		mensaje=JSON.parse(mensaje);
@@ -67,21 +65,35 @@ function conectarWebSocket() {
 function comenzar(mensaje) {
 	tablero.setAttribute("style", "display:visible");
 	var btnDado=document.getElementById("btnDado");
-	if (mensaje.jugadorConElTurno==localStorage.nombre) {
+	var username = getUsername();
+	if (mensaje.jugadorConElTurno==username) {
 		btnDado.setAttribute("style", "display:visible");
 	}
 	else {
 		btnDado.setAttribute("style", "display:none");
 	}
-	var spanListaJugadores=document.getElementById("spanListaJugadores");
-	var jugadores=mensaje.jugadores;
-	var r="";
-	for (var i=0; i<jugadores.length; i++)
-		r=r+jugadores[i] + " / ";
-	spanListaJugadores.innerHTML=r;
-	sessionStorage.idPartida=mensaje.idPartida;
+}
+
+function getUsername(){
+	var request = new XMLHttpRequest();
+	var username ="";
+	request.open("post", "getName.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK") {
+				username = respuesta.username;
+			}
+		}
+	};
+	var p = {
+			
+	};
+	request.send("p=" + JSON.stringify(p));
+	return username;
 }
 
 function addMensaje(texto) {
-	divMensajes.innerHTML+= texto;
+	divMensajes.innerHTML+= texto+"<br>";
 }
