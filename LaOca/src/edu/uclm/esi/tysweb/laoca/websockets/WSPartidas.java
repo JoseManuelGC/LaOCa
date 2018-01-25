@@ -22,9 +22,10 @@ import edu.uclm.esi.tysweb.laoca.dominio.Usuario;
 public class WSPartidas {
 	private static ConcurrentHashMap<String, Session> sesionesPorId=new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<String, Session> sesionesPorNombre=new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<String, String> sesiones=new ConcurrentHashMap<>();
 	
 	@OnOpen
-	public void open(Session sesion, EndpointConfig config) {
+	public void open(Session sesion, EndpointConfig config) throws IOException {
 		HttpSession httpSession=(HttpSession) config.getUserProperties().get(HttpSession.class.getName());
 		Usuario usuario=(Usuario) httpSession.getAttribute("usuario");
 		usuario.setWSSession(sesion);
@@ -32,6 +33,7 @@ public class WSPartidas {
 		System.out.println("Sesión " + sesion.getId());
 		sesionesPorId.put(sesion.getId(), sesion);
 		sesionesPorNombre.put(usuario.getUsername(), sesion);
+		sesiones.put(sesion.getId(), usuario.getUsername());
 
 		broadcast("Ha llegado " + usuario.getUsername());
 		
@@ -47,15 +49,19 @@ public class WSPartidas {
 	}
 	
 	@OnMessage
-	public void recibir(Session session, String msg) {
+	public void recibir(Session session, String msg) throws Exception {
+		String username = sesiones.get(session.getId());
+		Usuario usuario = Manager.get().getUsuario(username);
 		JSONObject jso=new JSONObject(msg);
 		if (jso.get("tipo").equals("DADO")) {
-			int idPartida=jso.getInt("idPartida");
-			String jugador=jso.getString("nombreJugador");
-			int dado=jso.getInt("puntos");
-			try {
-				JSONObject mensaje=Manager.get().tirarDado(idPartida, jugador, dado);
-			} catch (Exception e) {
+			if(usuario.getUsername()==usuario.getPartida().getJugadorConElTurno().getUsername()) {
+				int dado=jso.getInt("puntos");
+				try {
+					JSONObject mensaje=Manager.get().tirarDado(usuario.getPartida().getId(), usuario.getUsername(), dado);
+					
+				} catch (Exception e) {
+					
+				}
 			}
 		}
 	}

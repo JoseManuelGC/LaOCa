@@ -57,43 +57,30 @@ function conectarWebSocket() {
 			addMensaje(mensaje.mensaje);
 		} else if (mensaje.tipo=="COMIENZO") {
 			addMensaje("Comienza la partida");
-			comenzar(mensaje);
+			comenzar();
+		} else if (mensaje.tipo=="TUTURNO"){
+			tuTurno();
+		} else if (mensaje.tipo=="POSICION"){
+			btnDado.setAttribute("style", "display:none");
 		}
+		
 	}	
 }
 
-function comenzar(mensaje) {
+function comenzar() {
 	tablero.setAttribute("style", "display:visible");
-	var btnDado=document.getElementById("btnDado");
-	var username = getUsername();
-	if (mensaje.jugadorConElTurno==username) {
-		btnDado.setAttribute("style", "display:visible");
-	}
-	else {
-		btnDado.setAttribute("style", "display:none");
-	}
+	btnDado.setAttribute("style", "display:none");
 }
 
-function getUsername(){
-	var request = new XMLHttpRequest();
-	var username ="";
-	request.open("post", "getName.jsp");
-	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	request.onreadystatechange=function() {
-		if (request.readyState==4) {
-			var respuesta=JSON.parse(request.responseText);
-			if (respuesta.result=="OK") {
-				username = respuesta.username;
-			}
-		}
-	};
-	var p = {
-			
-	};
-	request.send("p=" + JSON.stringify(p));
-	return username;
+function tuTurno() {
+	btnDado.setAttribute("style", "display:visible");
 }
 
 function addMensaje(texto) {
 	divMensajes.innerHTML+= texto+"<br>";
+}
+
+function tirarDado(){
+	var mensaje={tipo: "DADO", puntos: 2};
+	ws.send(JSON.stringify(mensaje));
 }

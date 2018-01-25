@@ -71,6 +71,12 @@ public class Manager {
 		//if (usuarios.get(username)!=null)
 			//throw new Exception("El usuario ya está en una partida");
 	}
+	
+	public Usuario getUsuario(String username) throws Exception {
+		return this.usuarios.get(username);
+	}
+	
+	
 		
 	public Usuario addJugador(Usuario usuario) throws Exception {
 		if (this.partidasPendientes.isEmpty())
@@ -81,6 +87,7 @@ public class Manager {
 			throw new Exception("El usuario ya está en una partida");
 		partida.add(usuario);
 		usuario.setPartida(partida);
+		usuarios.put(usuario.getUsername(), usuario);
 		if (partida.isReady()) {
 			this.partidasPendientes.remove(partida.getId());
 			this.partidasEnJuego.put(partida.getId(), partida);
@@ -101,12 +108,16 @@ public class Manager {
 	public JSONObject tirarDado(int idPartida, String jugador, int dado) throws Exception {
 		Partida partida=this.partidasEnJuego.get(idPartida);
 		JSONObject mensaje=partida.tirarDado(jugador, dado);
+		mensaje.put("tipo", "POSICION");
 		mensaje.put("idPartida", idPartida);
 		mensaje.put("jugador", jugador);
 		partida.broadcast(mensaje);
 		if (mensaje!=null && mensaje.opt("ganador")!=null) {
 			terminar(partida);
 		}
+		JSONObject jso2=new JSONObject();
+		jso2.put("tipo", "TUTURNO");		
+		partida.getJugadorConElTurno().enviar(jso2);
 		return mensaje;
 	}
 

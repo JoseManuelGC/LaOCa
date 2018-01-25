@@ -1,5 +1,6 @@
 package edu.uclm.esi.tysweb.laoca.dominio;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
 
@@ -36,7 +37,7 @@ public class Partida {
 		return this.jugadores.size()==this.numeroDeJugadores;
 	}
 
-	public void comenzar() {
+	public void comenzar() throws IOException {
 		JSONObject jso=new JSONObject();
 		jso.put("tipo", "COMIENZO");
 		jso.put("idPartida", this.id);
@@ -47,6 +48,9 @@ public class Partida {
 			jsa.put(jugador.getUsername());
 		jso.put("jugadores", jsa);
 		broadcast(jso);
+		JSONObject jso2=new JSONObject();
+		jso2.put("tipo", "TUTURNO");		
+		getJugadorConElTurno().enviar(jso2);
 	}
 
 	public Usuario getJugadorConElTurno() {
@@ -98,6 +102,9 @@ public class Partida {
 			jugador.setTurnosSinTirar(destino.getTurnosSinTirar());
 		}
 		result.put("jugadorConElTurno", pasarTurno(conservarTurno));
+		JSONObject jso2=new JSONObject();
+		jso2.put("tipo", "TUTURNO");		
+		getJugadorConElTurno().enviar(jso2);
 		return result;
 	}
 
