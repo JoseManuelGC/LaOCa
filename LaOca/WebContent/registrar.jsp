@@ -14,8 +14,10 @@
 		String pwd1=jso.optString("pwd1");
 		String pwd2=jso.optString("pwd2");
 		comprobarCredenciales(username, email, pwd1, pwd2);
-		Manager.get().registrar(username, email, pwd1);
+		Usuario usuario = Manager.get().registrar(username, email, pwd1);
 		respuesta.put("result", "OK");
+		session.setAttribute("username", usuario.getUsername());
+		session.setAttribute("usuario", usuario);
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");

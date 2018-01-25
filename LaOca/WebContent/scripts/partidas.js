@@ -1,22 +1,21 @@
 function crearPartida() {
-	var request = new XMLHttpRequest();	
+	var request = new XMLHttpRequest();
 	request.open("post", "crearPartida.jsp");
 	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	request.onreadystatechange=function() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK") {
-				divMensajes.innerHTML="Creación de partida (" + respuesta.mensaje + ") solicitada";
+				divMensajes.innerHTML=respuesta.mensaje;
 				conectarWebSocket();
-				localStorage.nombre=document.getElementById("nombre").value;
+				//localStorage.nombre=document.getElementById("nombre").value;
 			} else {
-				divMensajes.innerHTML="Error: " + respuesta.mensaje;
+				divMensajes.innerHTML= respuesta.mensaje;
 			}				
 		}
 	};
 	var p = {
-		nombre : document.getElementById("nombre").value,
-		numeroDeJugadores : document.getElementById("numero").value
+		numeroJugadores : numeroJugadores.value
 	};
 	request.send("p=" + JSON.stringify(p));
 }
@@ -37,7 +36,7 @@ function unirse() {
 		}
 	};
 	var p = {
-		nombre : document.getElementById("nombre").value
+			
 	};
 	request.send("p=" + JSON.stringify(p));
 }
@@ -49,7 +48,6 @@ function conectarWebSocket() {
 	
 	ws.onopen = function() {
 		addMensaje("Websocket conectado");
-		divTablero.setAttribute("style", "display:visible");
 		var tablero=new Tablero();
 		tablero.dibujar(svgTablero);
 	}
@@ -67,10 +65,12 @@ function conectarWebSocket() {
 }
 
 function comenzar(mensaje) {
+	tablero.setAttribute("style", "display:visible");
 	var btnDado=document.getElementById("btnDado");
 	if (mensaje.jugadorConElTurno==localStorage.nombre) {
 		btnDado.setAttribute("style", "display:visible");
-	} else {
+	}
+	else {
 		btnDado.setAttribute("style", "display:none");
 	}
 	var spanListaJugadores=document.getElementById("spanListaJugadores");
@@ -83,18 +83,5 @@ function comenzar(mensaje) {
 }
 
 function addMensaje(texto) {
-	var div=document.createElement("div");
-	divChat.appendChild(div);
-	div.innerHTML=texto;
+	divMensajes.innerHTML+= texto;
 }
-
-
-
-
-
-
-
-
-
-
-

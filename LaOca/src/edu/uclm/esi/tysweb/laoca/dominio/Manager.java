@@ -1,6 +1,7 @@
 package edu.uclm.esi.tysweb.laoca.dominio;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
@@ -17,33 +18,67 @@ public class Manager {
 		this.partidasEnJuego=new ConcurrentHashMap<>();
 	}
 	
-	public Usuario crearPartida(String nombreJugador, int numeroDeJugadores) throws Exception {
-		Usuario usuario = findUsuario(nombreJugador);
-		if (usuario.getPartida()!=null)
-			throw new Exception("El usuario ya está asociado a una partida. Desconéctate para crear una nueva o unirte a otra");
-
+	private static class ManagerHolder {
+		static Manager singleton=new Manager();
+	}
+	
+	public static Manager get() {
+		return ManagerHolder.singleton;
+	}
+	
+	public Usuario registrar(String username, String email, String password) throws Exception {
+		UsuarioRegistrado u = new UsuarioRegistrado();
+		u.setUsername(username);
+		u.setEmail(email);
+		u.insert(password);
+		return u;
+	}
+	
+	public Usuario login(String username, String password) throws Exception {
+		UsuarioRegistrado u = new UsuarioRegistrado();
+		u.setUsername(username);
+		u.login(password);
+		return u;
+	}
+	
+	public void cambiarPassword(String username, String passwordActual, String passwordNueva) throws Exception{
+		UsuarioRegistrado.cambiarPassword(username, passwordActual, passwordNueva);
+	}
+	
+	public void actualizarPassword(String password, String token) throws Exception{
+		UsuarioRegistrado.actualizarPassword(password, token);
+	}
+	
+	public void recuperar(String email) throws Exception{
+		UsuarioRegistrado.recuperar(email);
+	}
+	
+	public Usuario invitado() throws Exception{
+		Usuario u = new Usuario();
+		return u.invitado();
+	}
+	
+	public Usuario crearPartida(Usuario usuario, int numeroDeJugadores) throws Exception {
+		findUsuario(usuario.getUsername());
 		Partida partida=new Partida(usuario, numeroDeJugadores);
 		usuario.setPartida(partida);
 		this.partidasPendientes.put(partida.getId(), partida);
+		this.usuarios.put(usuario.getUsername(), usuario);
 		return usuario;
 	}
 
-	private Usuario findUsuario(String nombreJugador) throws Exception {
-		Usuario usuario=this.usuarios.get(nombreJugador);
-		if (usuario==null) {
-			usuario=new Usuario(nombreJugador);
-			this.usuarios.put(nombreJugador, usuario);
-		}
-		return usuario;
+	private void findUsuario(String username) throws Exception {
+		//if (usuarios.get(username)!=null)
+			//throw new Exception("El usuario ya est� en una partida");
 	}
 		
-	public Usuario addJugador(String nombreJugador) throws Exception {
+	public Usuario addJugador(Usuario usuario) throws Exception {
 		if (this.partidasPendientes.isEmpty())
-			throw new Exception("No hay partidas pendientes. Crea una, pendejo");
+			throw new Exception("No hay partidas pendientes");
 		Partida partida=this.partidasPendientes.elements().nextElement();
-		Usuario usuario=findUsuario(nombreJugador);
+		findUsuario(usuario.getUsername());
 		if (usuario.getPartida()!=null)
-			throw new Exception("El usuario ya está asociado a una partida. Desconéctate para crear una nueva o unirte a otra");
+			throw new Exception("El usuario ya est� en una partida");
 		partida.add(usuario);
 		usuario.setPartida(partida);
 		if (partida.isReady()) {
@@ -62,38 +97,6 @@ public class Manager {
 	public String getWebAppPath() {
 		return webAppPath;
 	}
-	
-	private static class ManagerHolder {
-		static Manager singleton=new Manager();
-	}
-	
-	public static Manager get() {
-		return ManagerHolder.singleton;
-	}
-	
-	public Usuario registrar(String username, String email, String password) throws Exception {
-		Usuario u = UsuarioRegistrado.register(username, email, password);
-		usuarios.put(u.getLogin(), u);
-		return u;
-	}
-	
-	public Usuario login(String username, String password) throws Exception {
-		Usuario u = UsuarioRegistrado.login(username, password);
-		usuarios.put(u.getLogin(), u);
-		return u;
-	}
-	
-	public void cambiarPassword(String username, String passwordActual, String passwordNueva) throws Exception{
-		UsuarioRegistrado.cambiarPassword(username, passwordActual, passwordNueva);
-	}
-	
-	public void actualizarPassword(String password, String token) throws Exception{
-		UsuarioRegistrado.actualizarPassword(password, token);
-	}
-	
-	public void recuperar(String email) throws Exception{
-		UsuarioRegistrado.recuperar(email);
-	}
 
 	public JSONObject tirarDado(int idPartida, String jugador, int dado) throws Exception {
 		Partida partida=this.partidasEnJuego.get(idPartida);
@@ -110,6 +113,10 @@ public class Manager {
 	private void terminar(Partida partida) {
 		partida.terminar();
 		partidasEnJuego.remove(partida.getId());
+	}
+	
+	public ArrayList getRanking() throws Exception {
+		return UsuarioRegistrado.getRanking();
 	}
 	
 }

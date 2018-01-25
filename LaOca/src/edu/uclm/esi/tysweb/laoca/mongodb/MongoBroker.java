@@ -22,9 +22,10 @@ public class MongoBroker {
 	//private ConcurrentLinkedQueue<MongoClient> usadas, libres;
 	//private MongoDatabase db;
 	Pool pool;
+	final int poolSize = 50;
 	
 	private MongoBroker() {
-		this.pool = new Pool(50);
+		this.pool = new Pool(poolSize);
 		//MongoCredential credenciales=MongoCredential.createCredential("creadorDeUsuarios",	"admin", "creadorDeUsuarios".toCharArray());
 		//ServerAddress address=new ServerAddress("alarcosj.esi.uclm.es");
 		//ServerAddress address=new ServerAddress("localhost:27017");

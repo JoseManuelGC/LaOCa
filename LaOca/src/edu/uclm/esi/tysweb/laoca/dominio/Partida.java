@@ -20,7 +20,7 @@ public class Partida {
 		this.jugadores=new Vector<>();
 		this.jugadores.add(creador);
 		this.numeroDeJugadores=numeroDeJugadores;
-		this.id=new Random().nextInt();
+		this.id=Math.abs(new Random().nextInt());
 		this.tablero=new Tablero();
 	}
 
@@ -42,12 +42,11 @@ public class Partida {
 		jso.put("idPartida", this.id);
 		JSONArray jsa=new JSONArray();
 		this.jugadorConElTurno=(new Random()).nextInt(this.jugadores.size());
-		jso.put("jugadorConElTurno", getJugadorConElTurno().getLogin());
+		jso.put("jugadorConElTurno", getJugadorConElTurno().getUsername());
 		for (Usuario jugador : jugadores) 
-			jsa.put(jugador.getLogin());
+			jsa.put(jugador.getUsername());
 		jso.put("jugadores", jsa);
-		
-		//broadcast(jso);
+		broadcast(jso);
 	}
 
 	public Usuario getJugadorConElTurno() {
@@ -76,26 +75,26 @@ public class Partida {
 			this.tablero.moverAJugador(jugador, siguiente);
 			if (siguiente.getPos()==62) { // Llegada
 				this.ganador=jugador;
-				result.put("ganador", this.ganador.getLogin());
+				result.put("ganador", this.ganador.getUsername());
 			}
 		}
 		if (destino.getPos()==57) { // Muerte
 			jugador.setPartida(null);
-			result.put("mensaje", jugador.getLogin() + " cae en la muerte");
+			result.put("mensaje", jugador.getUsername() + " cae en la muerte");
 			this.jugadores.remove(jugador);
 			this.jugadorConElTurno--;
 			if (this.jugadores.size()==1) {
 				this.ganador=this.jugadores.get(0);
-				result.put("ganador", this.ganador.getLogin());
+				result.put("ganador", this.ganador.getUsername());
 			}
 		}
 		if (destino.getPos()==62) { // Llegada
 			this.ganador=jugador;
-			result.put("ganador", this.ganador.getLogin());
+			result.put("ganador", this.ganador.getUsername());
 		}
 		int turnosSinTirar=destino.getTurnosSinTirar();
 		if (turnosSinTirar>0) {
-			result.put("mensajeAdicional", jugador.getLogin() + " está " + turnosSinTirar + " turnos sin tirar porque ha caído en ");
+			result.put("mensajeAdicional", jugador.getUsername() + " está " + turnosSinTirar + " turnos sin tirar porque ha caído en ");
 			jugador.setTurnosSinTirar(destino.getTurnosSinTirar());
 		}
 		result.put("jugadorConElTurno", pasarTurno(conservarTurno));
@@ -115,12 +114,12 @@ public class Partida {
 					pasado=true;
 			} while (!pasado);
 		}
-		return getJugadorConElTurno().getLogin();
+		return getJugadorConElTurno().getUsername();
 	}
 
 	private Usuario findJugador(String nombreJugador) {
 		for (Usuario jugador : jugadores)
-			if (jugador.getLogin().equals(nombreJugador))
+			if (jugador.getUsername().equals(nombreJugador))
 				return jugador;
 		return null;
 	}

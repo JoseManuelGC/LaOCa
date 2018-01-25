@@ -9,16 +9,15 @@
 	
 	JSONObject respuesta=new JSONObject();
 	try {
-		String nombreJugador=jso.getString("nombre");
-		int numeroDeJugadores=jso.getInt("numeroDeJugadores");
-		Usuario usuario=Manager.get().crearPartida(nombreJugador, numeroDeJugadores);
-		session.setAttribute("usuario", usuario);	
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
+		int numeroJugadores=jso.getInt("numeroJugadores");
+		Manager.get().crearPartida(usuario, numeroJugadores);
+		//session.setAttribute("usuario", usuario);
 		respuesta.put("result", "OK");
-		respuesta.put("mensaje", usuario.getPartida().getId());
-		
-		Cookie cookie=new Cookie("kookie", "" + numeroDeJugadores);
-		cookie.setMaxAge(30);
-		response.addCookie(cookie);
+		respuesta.put("mensaje", "Partida "+usuario.getPartida().getId()+" creada. Esperando jugadores");
+		//Cookie cookie=new Cookie("cookie", "" + numeroJugadores);
+		//cookie.setMaxAge(30);
+		//response.addCookie(cookie);
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");

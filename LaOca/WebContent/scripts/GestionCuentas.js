@@ -8,7 +8,6 @@ function registrar() {
 			if (respuesta.result=="OK"){
 				index.setAttribute("style", "display:none");
 				juego.setAttribute("style", "display:block");
-				opciones.setAttribute("style", "display:none");
 			}
 			else{
 				document.getElementById("feedbackRegisterText").innerHTML = respuesta.mensaje;
@@ -32,11 +31,33 @@ function login() {
 			if (respuesta.result=="OK"){
 				index.setAttribute("style", "display:none");
 				juego.setAttribute("style", "display:block");
-				sessionStorage.setItem("username", respuesta.username);
 			}	
 			else{
 				document.getElementById("feedbackLoginText").innerHTML = respuesta.mensaje;
 				feedbackLogin.setAttribute("style", "display:block");
+			}
+		}
+	};
+	var p = {
+		username : usernameLogin.value, password : passwordLogin.value 
+	};
+	request.send("p=" + JSON.stringify(p));
+}
+
+function invitado() {
+	var request = new XMLHttpRequest();	
+	request.open("post", "invitado.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK"){
+				index.setAttribute("style", "display:none");
+				juego.setAttribute("style", "display:block");
+			}	
+			else{
+				document.getElementById("feedbackInvitadoText").innerHTML = respuesta.mensaje;
+				feedbackInvitado.setAttribute("style", "display:block");
 			}
 		}
 	};
@@ -121,7 +142,7 @@ function actualizarPassword() {
 			}
 		}
 	};
-	var get = getGET();
+	var get = getURL();
 	var token = get['token'];
 	if(token!="error"){
 		var p = {
@@ -138,7 +159,7 @@ function actualizarPassword() {
 		
 }
 
-function getGET(){
+function getURL(){
 	var get = {};
 	try{
 	   var loc = document.location.href;
@@ -153,6 +174,40 @@ function getGET(){
 		get["token"] = "error";
 	}
    return get;
+}
+
+function ranking() {
+	if(document.getElementById("ranking").getAttribute("aria-expanded")=="false"){
+		var request = new XMLHttpRequest();	
+		request.open("post", "ranking.jsp");
+		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		request.onreadystatechange=function() {
+			if (request.readyState==4) {
+				var respuesta=JSON.parse(request.responseText);
+				if (respuesta.result=="OK"){
+					feedbackRanking.setAttribute("style", "display:none");
+					var lista = respuesta.lista;
+					if (lista.length>0){
+						var table =	'<thead><tr><th>#</th><th>Usuario</th><th>Victorias</th></tr></thead>';
+						for(var i = 0; i<lista.length;i++){
+							table += '<tbody><tr><td>'+(i+1)+'</td><td>'+lista[i][0]+'</td><td>'+lista[i][1]+'</td></tr>';
+						}
+						table += '</tbody>';
+						$(document).find('.table').html(table);
+					}
+					var a = 3;
+				}	
+				else{
+					document.getElementById("feedbackRankingText").innerHTML = respuesta.mensaje;
+					feedbackRanking.setAttribute("style", "display:block");
+				}
+			}
+		};
+		var p = {
+			
+		};
+		request.send("p=" + JSON.stringify(p));
+	}
 }
 
 function estaConectado() {

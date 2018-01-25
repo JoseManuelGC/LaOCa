@@ -9,25 +9,14 @@
 	
 	JSONObject respuesta=new JSONObject();
 	try {
-		String username=jso.optString("username");
-		String password=jso.optString("password");
-		comprobarCampos(username, password);
-		Usuario usuario=Manager.get().login(username, password);
-		session.setAttribute("usuario", usuario);
+		Usuario usuario = Manager.get().invitado();
 		respuesta.put("result", "OK");
+		session.setAttribute("usuario", usuario);
 		session.setAttribute("username", usuario.getUsername());
-		
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");
 		respuesta.put("mensaje", e.getMessage());
 	}
 	out.println(respuesta.toString());
-%>
-
-<%!
-private void comprobarCampos(String username, String password) throws Exception {
-	if (username.length()==0 || password.length()==0)
-		throw new Exception("Debe rellenar todos los campos");	
-}
 %>

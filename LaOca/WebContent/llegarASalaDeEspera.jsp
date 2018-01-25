@@ -4,15 +4,13 @@
     pageEncoding="UTF-8"%>
 
 <%
-	String p=request.getParameter("p");
-	JSONObject jso=new JSONObject(p);
-	String nombreJugador=jso.getString("nombre");
-	
 	JSONObject respuesta=new JSONObject();
 	try {
-		Usuario usuario=Manager.get().addJugador(nombreJugador);
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
+		Manager.get().addJugador(usuario);
 		session.setAttribute("usuario", usuario);
 		respuesta.put("result", "OK");
+		respuesta.put("mensaje", "Unido a la partida "+usuario.getPartida().getId());
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");

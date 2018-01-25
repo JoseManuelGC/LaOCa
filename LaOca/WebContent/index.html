@@ -103,8 +103,11 @@
 				<form id="guest-form" action="" method="post" role="form" style="display:none;">
 					<div class="form-group">
 						<div class="row">
+						<div class="alert alert-danger" id="feedbackInvitado" style="display:none">
+							<p id="feedbackInvitadoText"></p>
+						</div>
 							<div class="col-sm-6 col-sm-offset-3">
-								<input type="button" onclick="registrar()" name="guest-submit" id="guest-submit" tabindex="4" class="form-control btn btn-primary" value="Jugar como invitado">
+								<input type="button" onclick="invitado()" name="guest-submit" id="guest-submit" tabindex="4" class="form-control btn btn-primary" value="Jugar como invitado">
 							</div>
 						</div>
 					</div>
@@ -196,37 +199,42 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#ranking">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#ranking" onclick="ranking()">
                     Ranking</a>
                   </h4>
                 </div>
-                <div id="ranking" class="panel-collapse collapse">
-	                <form>
-	                 
-	                </form>
-
-                </div>
+                <div id="ranking" class="panel-collapse collapse" aria-expanded="false">
+	                <table class="table" id="table">
+	                
+	                </table>
+	                <div class="alert alert-danger" id="feedbackRanking" style="display:none">
+						<p id="feedbackRankingText"></p>
+					</div>
                 </div>
               </div>
+           </div>
     
     
    </div>
    </div>
    </div>
-   <div class="col-md-6">
-   <div class="row">
-    <svg id="svgTablero" width="650" height="650" style="background-color:grey">
-    </svg>
+   <div class="container col-md-6" id="tablero" style="display:none">
+	   <div class="row">
+	    <svg id="svgTablero" width="650" height="650" style="background-color:grey">
+	    </svg>
+	   </div>
+	   <div class="row">
+	    <button align="center" type="button" class="btn btn-primary" id="btnDado" onclick="tirarDado()">
+		 Dado
+		</button>
+	   </div> 
    </div>
-   <div class="row">
-    <button align="center" type="button" class="btn btn-primary" id="btnDado" onclick="tirarDado()">
-	 Dado
-	</button>
-   </div> 
-    
-   </div>
-   <div class="col-md-3">
+   <div class="col-md-3" id="chat">
    Chat
+   <div class="row">
+   	<div id="divMensajes"></div>
+   </div>
+   	
    </div>
   </div>
  </div>
