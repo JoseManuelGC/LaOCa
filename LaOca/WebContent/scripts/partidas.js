@@ -41,6 +41,8 @@ function unirse() {
 }
 
 var ws;
+var timeout;
+var tiempo = 5;
 
 function conectarWebSocket() {
 	ws=new WebSocket("ws://localhost:8080/LaOca/servidorDePartidas");
@@ -62,8 +64,8 @@ function conectarWebSocket() {
 			tuTurno();
 		} else if (mensaje.tipo=="POSICION"){
 			btnDado.setAttribute("style", "display:none");
-		}
-		
+			addMensaje("El jugador "+mensaje.jugador+"está en la "+(mensaje.casillaOrigen+1)+" ha sacado "+mensaje.dado);
+		}		
 	}	
 }
 
@@ -74,6 +76,8 @@ function comenzar() {
 
 function tuTurno() {
 	btnDado.setAttribute("style", "display:visible");
+	myProgress.setAttribute("style", "display:visible");
+	move();
 }
 
 function addMensaje(texto) {
@@ -81,6 +85,32 @@ function addMensaje(texto) {
 }
 
 function tirarDado(){
-	var mensaje={tipo: "DADO", puntos: 2};
+	var dado = Math.floor(Math.random() * (6)) + 1;
+	var mensaje={tipo: "DADO", puntos: dado};
+	clearInterval(timeout);
+	myProgress.setAttribute("style", "display:none");
 	ws.send(JSON.stringify(mensaje));
+}
+
+function move() {
+	  var elem = document.getElementById("myBar");   
+	  var width = 100;
+	  timeout = setInterval(frame, 5);
+	  function frame() {
+	    if (width <= 0.1) {
+	    	clearInterval(timeout);
+	    	tiempoAgotado();
+	    } else {
+	      width-=0.1;
+	      elem.style.width = width + '%'; 
+	    }
+	  }
+	}
+
+function tiempoAgotado(){
+	btnDado.setAttribute("style", "display:none");
+	myProgress.setAttribute("style", "display:none");
+	var mensaje={tipo: "TIMEOUT"};
+	ws.send(JSON.stringify(mensaje));
+	addMensaje("Se te ha acabado el tiempo");
 }

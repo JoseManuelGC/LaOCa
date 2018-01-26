@@ -22,6 +22,19 @@
 		@keyframes spin {
     		0% { transform: rotate(0deg); }
     		100% { transform: rotate(360deg); }
+    	}
+    	#myProgress {
+		  width: 100%;
+		  height: 30px;
+		  position: relative;
+		  background-color: #ddd;
+		}
+		
+		#myBar {
+		  background-color: #4CAF50;
+		  width: 10px;
+		  height: 30px;
+		  position: absolute;
 		}
 	</style>
 </head>
@@ -224,11 +237,20 @@
 	    </svg>
 	   </div>
 	   <div class="row">
-	    <button align="center" type="button" class="btn btn-primary" id="btnDado" onclick="tirarDado()">
+	   <div class="col-md-3">
+	   <button align="center" type="button" class="btn btn-primary" id="btnDado" onclick="tirarDado()">
 		 Dado
 		</button>
+  		</div>
+  		<div class="col-md-6" id="progressBar">
+ 		 	<div id="myProgress" style="display:none">
+ 		 		<div id="myBar">
+	   		</div>
+ 		 	</div>
+ 		</div>
+	    </div>
 	   </div> 
-   </div>
+	   
    <div class="col-md-3" id="chat">
    Chat
    <div class="row">

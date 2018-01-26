@@ -52,6 +52,8 @@ public class WSPartidas {
 	public void recibir(Session session, String msg) throws Exception {
 		String username = sesiones.get(session.getId());
 		Usuario usuario = Manager.get().getUsuario(username);
+		if(usuario.getPartida()==null)
+			throw new Exception("No tienes partida");
 		JSONObject jso=new JSONObject(msg);
 		if (jso.get("tipo").equals("DADO")) {
 			if(usuario.getUsername()==usuario.getPartida().getJugadorConElTurno().getUsername()) {
@@ -63,6 +65,9 @@ public class WSPartidas {
 					
 				}
 			}
+		}
+		else if(jso.get("tipo").equals("TIMEOUT")) {
+			usuario.getPartida().timeout(usuario);
 		}
 	}
 

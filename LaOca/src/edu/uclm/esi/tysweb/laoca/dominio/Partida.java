@@ -102,6 +102,7 @@ public class Partida {
 			jugador.setTurnosSinTirar(destino.getTurnosSinTirar());
 		}
 		result.put("jugadorConElTurno", pasarTurno(conservarTurno));
+		return result;
 	}
 
 	private String pasarTurno(boolean conservarTurno) {
@@ -152,6 +153,21 @@ public class Partida {
 
 	public Usuario getGanador() {
 		return this.ganador;
+	}
+	
+	public JSONObject timeout(Usuario jugador) {
+		JSONObject result=new JSONObject();
+		jugador.setPartida(null);
+		result.put("tipo", "DIFUSION");
+		result.put("mensaje", jugador.getUsername() + " eliminado por timeout");
+		this.jugadores.remove(jugador);
+		this.jugadorConElTurno--;
+		if (this.jugadores.size()==1) {
+			this.ganador=this.jugadores.get(0);
+			result.put("ganador", this.ganador.getUsername());
+		}
+		broadcast(result);
+		return result;
 	}
 
 	public void terminar() {
