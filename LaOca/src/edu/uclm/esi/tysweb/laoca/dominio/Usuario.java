@@ -79,4 +79,9 @@ public class Usuario {
 		return this;
 		
 	}
+
+	public void addResultado(String tipo) throws Exception {
+		DAOUsuario.addResultado(this.getUsername(), tipo);
+		
+	}
 }

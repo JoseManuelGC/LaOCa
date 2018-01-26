@@ -108,9 +108,7 @@ public class Manager {
 	public JSONObject tirarDado(int idPartida, String jugador, int dado) throws Exception {
 		Partida partida=this.partidasEnJuego.get(idPartida);
 		JSONObject mensaje=partida.tirarDado(jugador, dado);
-		mensaje.put("tipo", "POSICION");
-		mensaje.put("idPartida", idPartida);
-		mensaje.put("jugador", jugador);
+		//mensaje.put("idPartida", idPartida);
 		partida.broadcast(mensaje);
 		if (mensaje!=null && mensaje.opt("ganador")!=null) {
 			terminar(partida);
@@ -121,7 +119,7 @@ public class Manager {
 		return mensaje;
 	}
 
-	private void terminar(Partida partida) {
+	private void terminar(Partida partida) throws Exception {
 		partida.terminar();
 		partidasEnJuego.remove(partida.getId());
 	}

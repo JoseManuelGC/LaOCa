@@ -59,8 +59,7 @@ public class WSPartidas {
 			if(usuario.getUsername()==usuario.getPartida().getJugadorConElTurno().getUsername()) {
 				int dado=jso.getInt("puntos");
 				try {
-					JSONObject mensaje=Manager.get().tirarDado(usuario.getPartida().getId(), usuario.getUsername(), dado);
-					
+					JSONObject mensaje=Manager.get().tirarDado(usuario.getPartida().getId(), usuario.getUsername(), dado);					
 				} catch (Exception e) {
 					
 				}

@@ -64,26 +64,28 @@ public class Partida {
 		Usuario jugador=findJugador(nombreJugador);
 		if (jugador!=getJugadorConElTurno())
 			throw new Exception("No tienes el turno");
-		result.put("tipo", "TIRADA");
-		result.put("casillaOrigen", jugador.getCasilla().getPos());
-		result.put("dado", dado);
+		result.put("tipo", "POSICION");
+		result.put("jugador", jugador);
+		//result.put("casillaOrigen", jugador.getCasilla().getPos());
+		//result.put("dado", dado);
 		Casilla destino=this.tablero.tirarDado(jugador, dado);
-		result.put("destinoInicial", destino.getPos());
+		result.put("destino", destino.getPos());
 		Casilla siguiente=destino.getSiguiente();
 		boolean conservarTurno=false;
 		if (siguiente!=null) {
 			conservarTurno=true;
 			String mensaje=destino.getMensaje();
-			result.put("destinoFinal", siguiente.getPos());
+			result.put("destino", siguiente.getPos());
 			result.put("mensaje", mensaje);
 			this.tablero.moverAJugador(jugador, siguiente);
-			if (siguiente.getPos()==62) { // Llegada
+			if (siguiente.getPos()==62) {
 				this.ganador=jugador;
 				result.put("ganador", this.ganador.getUsername());
 			}
 		}
 		if (destino.getPos()==57) { // Muerte
 			jugador.setPartida(null);
+			jugador.addResultado("derrota");
 			result.put("mensaje", jugador.getUsername() + " cae en la muerte");
 			this.jugadores.remove(jugador);
 			this.jugadorConElTurno--;
@@ -127,7 +129,7 @@ public class Partida {
 				return jugador;
 		return null;
 	}
-
+	
 	public void addJugador(Usuario jugador) {
 		this.tablero.addJugador(jugador);
 	}
@@ -170,9 +172,18 @@ public class Partida {
 		return result;
 	}
 
-	public void terminar() {
-		for (Usuario jugador : this.jugadores)
+	public void terminar() throws Exception {
+		for (Usuario jugador : this.jugadores) {
 			jugador.setPartida(null);
+			if(this.ganador.getUsername().equals(jugador.getUsername()))
+				jugador.addResultado("victoria");
+			else
+				jugador.addResultado("derrota");						
+		}
+		JSONObject result=new JSONObject();		
+		result.put("tipo", "FIN");
+		result.put("ganador", getGanador());
+		broadcast(result);		
 	}
 	
 	@Override

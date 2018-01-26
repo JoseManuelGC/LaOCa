@@ -277,4 +277,30 @@ public class DAOUsuario {
 		connection.close();
 		return lista;
 	}
+	
+	public static void addResultado(String username, String tipo) throws Exception {
+		MongoClient connection = MongoBroker.get().getConnection();
+		MongoDatabase db = connection.getDatabase("oca");
+		MongoCollection<BsonDocument> usuarios = db.getCollection("usuarios", BsonDocument.class);
+		BsonDocument criterio= new BsonDocument();
+		criterio.append("username", new BsonString(username));
+		FindIterable<BsonDocument> resultados = usuarios.find(criterio);
+		BsonDocument resultado = resultados.first();
+		if(resultado!=null) {
+			BsonDocument actualizacion = new BsonDocument();
+			actualizacion.append("username", new BsonString(resultado.getString("username").getValue()));
+			actualizacion.append("email", new BsonString(resultado.getString("email").getValue()));
+			actualizacion.append("password", new BsonString(resultado.getString("password").getValue()));
+			if(tipo.equals("victoria")) {
+				actualizacion.append("victorias", new BsonInt32(resultado.getInt32("victorias").getValue()+1));
+				actualizacion.append("derrotas", new BsonInt32(resultado.getInt32("derrotas").getValue()));
+			}
+			else if(tipo.equals("derrota")) {
+				actualizacion.append("victorias", new BsonInt32(resultado.getInt32("victorias").getValue()));
+				actualizacion.append("derrotas", new BsonInt32(resultado.getInt32("derrotas").getValue()+1));
+			}
+			usuarios.replaceOne(criterio, actualizacion);
+		}
+		connection.close();
+	}
 }
