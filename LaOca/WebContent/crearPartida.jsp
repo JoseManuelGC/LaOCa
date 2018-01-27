@@ -15,6 +15,7 @@
 		//session.setAttribute("usuario", usuario);
 		respuesta.put("result", "OK");
 		respuesta.put("mensaje", "Partida "+usuario.getPartida().getId()+" creada. Esperando jugadores");
+		respuesta.put("color", usuario.getColor());
 		//Cookie cookie=new Cookie("cookie", "" + numeroJugadores);
 		//cookie.setMaxAge(30);
 		//response.addCookie(cookie);

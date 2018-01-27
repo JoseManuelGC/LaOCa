@@ -6,7 +6,7 @@ function crearPartida() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK") {
-				divMensajes.innerHTML=respuesta.mensaje;
+				divMensajes.innerHTML+=respuesta.mensaje;
 				conectarWebSocket();
 			} else {
 				divMensajes.innerHTML= respuesta.mensaje;
@@ -43,27 +43,31 @@ function unirse() {
 var ws;
 var timeout;
 var tiempo = 5;
+var fichas = {orange: 0, blue: 0, green: 0, red: 0};
 
 function conectarWebSocket() {
 	ws=new WebSocket("ws://localhost:8080/LaOca/servidorDePartidas");
 	
 	ws.onopen = function() {
 		addMensaje("Websocket conectado");
-		var tablero=new Tablero();
-		tablero.dibujar(svgTablero);
 	}	
 	ws.onmessage = function(datos) {
 		var mensaje=datos.data;
 		mensaje=JSON.parse(mensaje);
 		if (mensaje.tipo=="DIFUSION") {
 			addMensaje(mensaje.mensaje);
-		} else if (mensaje.tipo=="COMIENZO") {
+		} else if (mensaje.tipo=="COMIENZO") {			
 			addMensaje("Comienza la partida");
+			var lista = mensaje.jugadores;
+			for(var i = 0; i<lista.length;i++){
+				actualizarFichas(lista[i][1], 1);
+			}
 			comenzar();
 		} else if (mensaje.tipo=="TUTURNO"){
 			tuTurno();
 		} else if (mensaje.tipo=="POSICION"){
 			addMensaje("El jugador "+mensaje.jugador+" está en la "+(mensaje.casillaOrigen+1)+", ha sacado "+mensaje.dado);
+			moverFicha(mensaje.destino, mensaje.color);
 		} else if (mensaje.tipo=="FIN"){
 			btnDado.setAttribute("style", "display:none");
 			myProgress.setAttribute("style", "display:none");
@@ -74,8 +78,10 @@ function conectarWebSocket() {
 }
 
 function comenzar() {
+	borrarFichas();
 	tablero.setAttribute("style", "display:visible");
 	btnDado.setAttribute("style", "display:none");
+	colocarFichas();
 }
 
 function tuTurno() {
@@ -140,4 +146,49 @@ function pararRotacion(){
 	var mensaje={tipo: "DADO", puntos: result+1};
 	myProgress.setAttribute("style", "display:none");
 	ws.send(JSON.stringify(mensaje));
+}
+
+function moverFicha(destino, color){
+	borrarFichas();
+	actualizarFichas(color, destino);
+	colocarFichas();
+}
+
+function borrarFichas(){
+	if(fichas.orange!=0)
+		document.getElementById(fichas.orange).innerHTML = "";	
+	if(fichas.blue!=0)
+		document.getElementById(fichas.blue).innerHTML = "";	
+	if(fichas.green!=0)
+		document.getElementById(fichas.green).innerHTML = "";
+	if(fichas.red!=0)
+		document.getElementById(fichas.red).innerHTML = "";	
+}
+
+function colocarFichas(){
+	if(fichas.orange!=0)
+		document.getElementById(fichas.orange).innerHTML+="<div class=\"circle-orange\"></div>";
+	if(fichas.blue!=0)
+		document.getElementById(fichas.blue).innerHTML+="<div class=\"circle-blue\"></div>";
+	if(fichas.green!=0)
+		document.getElementById(fichas.green).innerHTML+="<div class=\"circle-green\"></div>";
+	if(fichas.red!=0)
+		document.getElementById(fichas.red).innerHTML+="<div class=\"circle-red\"></div>";
+}
+
+function actualizarFichas(color, posicion){
+	switch(color){
+	    case "orange":
+	        fichas.orange = posicion;
+	        break;
+	    case "blue":
+	        fichas.blue = posicion;
+	        break;
+	    case "green":
+	        fichas.green= posicion;
+	        break;
+	    case "red":
+	        fichas.red = posicion;
+	        break;
+	}
 }

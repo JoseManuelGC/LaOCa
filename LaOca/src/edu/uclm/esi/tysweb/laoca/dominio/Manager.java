@@ -62,6 +62,7 @@ public class Manager {
 		findUsuario(usuario.getUsername());
 		Partida partida=new Partida(usuario, numeroDeJugadores);
 		usuario.setPartida(partida);
+		usuario.setColor(partida.asignarColor());
 		this.partidasPendientes.put(partida.getId(), partida);
 		this.usuarios.put(usuario.getUsername(), usuario);
 		return usuario;
@@ -74,9 +75,7 @@ public class Manager {
 	
 	public Usuario getUsuario(String username) throws Exception {
 		return this.usuarios.get(username);
-	}
-	
-	
+	}	
 		
 	public Usuario addJugador(Usuario usuario) throws Exception {
 		if (this.partidasPendientes.isEmpty())
@@ -87,6 +86,7 @@ public class Manager {
 			throw new Exception("El usuario ya está en una partida");
 		partida.add(usuario);
 		usuario.setPartida(partida);
+		usuario.setColor(partida.asignarColor());
 		usuarios.put(usuario.getUsername(), usuario);
 		if (partida.isReady()) {
 			this.partidasPendientes.remove(partida.getId());

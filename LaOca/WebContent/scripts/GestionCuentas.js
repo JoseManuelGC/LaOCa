@@ -61,8 +61,7 @@ function invitado() {
 			}
 		}
 	};
-	var p = {
-		username : usernameLogin.value, password : passwordLogin.value 
+	var p = { 
 	};
 	request.send("p=" + JSON.stringify(p));
 }

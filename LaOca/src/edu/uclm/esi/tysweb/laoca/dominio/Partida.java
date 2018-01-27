@@ -1,6 +1,7 @@
 package edu.uclm.esi.tysweb.laoca.dominio;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 
@@ -16,6 +17,7 @@ public class Partida {
 	private int jugadorConElTurno;
 	private Tablero tablero;
 	private Usuario ganador;
+	private Vector<String> colores;
 
 	public Partida(Usuario creador, int numeroDeJugadores) {
 		this.jugadores=new Vector<>();
@@ -23,6 +25,11 @@ public class Partida {
 		this.numeroDeJugadores=numeroDeJugadores;
 		this.id=Math.abs(new Random().nextInt());
 		this.tablero=new Tablero();
+		this.colores=new Vector<>();
+		colores.add("red");
+		colores.add("blue");
+		colores.add("green");
+		colores.add("orange");
 	}
 
 	public int getId() {
@@ -36,17 +43,24 @@ public class Partida {
 	public boolean isReady() {
 		return this.jugadores.size()==this.numeroDeJugadores;
 	}
+	
+	public String asignarColor() {
+		return colores.remove(0);
+	}
 
 	public void comenzar() throws IOException {
 		JSONObject jso=new JSONObject();
 		jso.put("tipo", "COMIENZO");
 		jso.put("idPartida", this.id);
-		JSONArray jsa=new JSONArray();
 		this.jugadorConElTurno=(new Random()).nextInt(this.jugadores.size());
 		jso.put("jugadorConElTurno", getJugadorConElTurno().getUsername());
-		for (Usuario jugador : jugadores) 
-			jsa.put(jugador.getUsername());
-		jso.put("jugadores", jsa);
+		ArrayList<String[]> lista = new ArrayList();
+		for (Usuario jugador : jugadores) {
+			String[] par = {jugador.getUsername(), jugador.getColor()};
+			lista.add(par);
+		}
+		JSONArray jsArray = new JSONArray(lista);
+		jso.put("jugadores", jsArray);
 		broadcast(jso);
 		JSONObject jso2=new JSONObject();
 		jso2.put("tipo", "TUTURNO");		
@@ -66,16 +80,18 @@ public class Partida {
 			throw new Exception("No tienes el turno");
 		result.put("tipo", "POSICION");
 		result.put("jugador", jugador);
+		result.put("color", jugador.getColor());
+		result.put("dado", dado);
 		//result.put("casillaOrigen", jugador.getCasilla().getPos());
 		//result.put("dado", dado);
 		Casilla destino=this.tablero.tirarDado(jugador, dado);
-		result.put("destino", destino.getPos());
+		result.put("destino", destino.getPos()+1);
 		Casilla siguiente=destino.getSiguiente();
 		boolean conservarTurno=false;
 		if (siguiente!=null) {
 			conservarTurno=true;
 			String mensaje=destino.getMensaje();
-			result.put("destino", siguiente.getPos());
+			result.put("destino", siguiente.getPos()+1);
 			result.put("mensaje", mensaje);
 			this.tablero.moverAJugador(jugador, siguiente);
 			if (siguiente.getPos()==62) {
@@ -85,6 +101,7 @@ public class Partida {
 		}
 		if (destino.getPos()==57) { // Muerte
 			jugador.setPartida(null);
+			jugador.setColor(null);
 			jugador.addResultado("derrota");
 			result.put("mensaje", jugador.getUsername() + " cae en la muerte");
 			this.jugadores.remove(jugador);
@@ -132,6 +149,7 @@ public class Partida {
 	
 	public void addJugador(Usuario jugador) {
 		this.tablero.addJugador(jugador);
+		jugador.setColor(colores.remove(0));
 	}
 	
 	void broadcast(JSONObject jso) {
@@ -160,6 +178,7 @@ public class Partida {
 	public JSONObject timeout(Usuario jugador) {
 		JSONObject result=new JSONObject();
 		jugador.setPartida(null);
+		jugador.setColor(null);
 		result.put("tipo", "DIFUSION");
 		result.put("mensaje", jugador.getUsername() + " eliminado por timeout");
 		this.jugadores.remove(jugador);
@@ -175,6 +194,7 @@ public class Partida {
 	public void terminar() throws Exception {
 		for (Usuario jugador : this.jugadores) {
 			jugador.setPartida(null);
+			jugador.setColor(null);
 			if(this.ganador.getUsername().equals(jugador.getUsername()))
 				jugador.addResultado("victoria");
 			else
