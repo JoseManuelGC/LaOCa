@@ -62,7 +62,8 @@ public class UsuarioRegistrado extends Usuario {
 		return DAOUsuario.getRanking();
 	}
 	
-	
-	
+	public UsuarioRegistrado registrarGoogle() throws Exception{
+		return DAOUsuario.registrarGoogle(this);
+	}	
 	
 }

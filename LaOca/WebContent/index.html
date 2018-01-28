@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<meta name="google-signin-client_id" content="44177352983-6mks1hp3dqamengp5aacdvct8aali1r3.apps.googleusercontent.com">
 	<title>La Oca</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<style type="text/css">
@@ -43,6 +44,12 @@
   height: 80vh;    
   margin: auto;
 }
+.jugadores{
+		  width: 24%;
+		  height: 30px;
+  float: left;    
+  text-align: center;
+	}
 .inicio {
   background-color: yellow;
   height: 11.1111%;
@@ -264,7 +271,8 @@
 }
 	</style>
 </head>
-<body>
+<body onload="leerCookieLogin();">
+
  <div class="container-fluid">
   <div class="row" id="index">
   <h1 align="center">
@@ -312,6 +320,8 @@
 							<div class="col-sm-6 col-sm-offset-3">
 								<input type="button" onclick="login()" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-primary" value="Iniciar sesión">
 							</div>
+							<div class="g-signin2" data-onsuccess="onSignIn">
+							</div>							
 						</div>
 					</div>
 				</form>
@@ -335,7 +345,7 @@
 						<div class="row">
 							<div class="col-sm-6 col-sm-offset-3">
 								<input type="button" onclick="registrar()" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-primary" value="Registrarse">
-							</div>
+							</div>							
 						</div>
 					</div>
 				</form>
@@ -381,6 +391,21 @@
  <br>
   <div class="container-fluid" id="juego" style="display:none">
    <div class="col-md-3">
+   <div class="row">
+   <div class="col-md-4" id="avatar">
+   </div>
+   <div class="col-md-8" id="nombreUsuario">
+   </div>
+   </div>
+   <div class="row">
+   <div class="col-md-6" id="botonSalirGoogle" style="display:none">   	
+		<input type="button" onclick="signOut()" name="salirGoogle" id="salirGoogle" tabindex="4" class="form-control btn btn-primary" value="Cerrar sesión">
+   </div>
+   <div class="col-md-6" id="botonSalirCuenta" style="display:none">   	
+		<input type="button" onclick="salirCuenta()" name="salirCuenta" id="salirCuenta" tabindex="4" class="form-control btn btn-primary" value="Cerrar sesión">
+   </div>
+   </div>
+   <br>
     <div class="row">
     <div class="col-md-12" id="cambiar">
     	<div class="panel-group" id="accordion">
@@ -452,12 +477,18 @@
                 </div>
               </div>
            </div>
-    
-    
    </div>
    </div>
    </div>
-   <div class="container col-md-6" id="tablero" style="display:none">
+   <div class="container col-md-6">
+   <div class="row">
+   <div id="jugadores" style="margin: auto;">
+	   
+  	</div>
+  	</div>
+   
+  	<br>  	
+   <div id="tablero" style="display:none">
 	   <div class="row">
 	    <div class="square">
     <div class="normal" id="22"></div>
@@ -551,8 +582,9 @@
     <div class="puente" id="6"></div>
 
   </div>
-	    </div>
-	   <div class="row">
+</div>
+  	<br>
+       <div class="row">
 	   <div class="col-md-3">
 	   <button align="center" type="button" class="btn btn-link" id="btnDado" onclick="tirarDado()">
 		 <img id="dado" border="0" class="responsive" src="dado1.svg" width="75px" height="75px">
@@ -566,9 +598,17 @@
  		</div>
 	    </div>
 	   </div> 
-	   
+
+	  </div>
    <div class="col-md-3" id="chat">
    Chat
+   <div class="row">
+   	<div id="conversacion">
+   	<input type="text" name="cajaMensaje" id="cajaMensaje" tabindex="1" class="form-control" placeholder="Escriba su mensaje" value="">
+   	<input type="button" onclick="enviarMensaje()" name="buttonEnviar" id="buttonEnviar" class="form-control btn btn-primary" value="Enviar">
+   	<div id="areaChat"></div>
+   	</div>
+   </div>
    <div class="row">
    	<div id="divMensajes"></div>
    </div>
@@ -580,14 +620,10 @@
 
 
 <script>
-$('input').on('keypress', function (event) {
-    var regex = new RegExp("^[a-zA-Z0-9]+$");
-    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-    if (!regex.test(key)) {
-       event.preventDefault();
-       return false;
-    }
-});
+function signOut() {
+	gapi.auth2.getAuthInstance().disconnect();
+	volverInicio();
+}
 
 function cambiar(){
 	$(function() {
@@ -653,6 +689,7 @@ function cambiar(){
 		});
 	});	
 }
+
 </script>
 	
 	<script>
@@ -663,6 +700,7 @@ function cambiar(){
 	<script src="scripts/GestionCuentas.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<script src="https://apis.google.com/js/platform.js" async defer></script>
   	
 </body>
 </html>

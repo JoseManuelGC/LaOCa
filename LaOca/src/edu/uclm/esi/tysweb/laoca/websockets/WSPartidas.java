@@ -1,6 +1,7 @@
 package edu.uclm.esi.tysweb.laoca.websockets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +13,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.uclm.esi.tysweb.laoca.dominio.Manager;
@@ -34,10 +36,22 @@ public class WSPartidas {
 		sesionesPorId.put(sesion.getId(), sesion);
 		sesionesPorNombre.put(usuario.getUsername(), sesion);
 		sesiones.put(sesion.getId(), usuario.getUsername());
+		
+		ArrayList<String[]> lista = new ArrayList();
+		for (Usuario jugador : usuario.getPartida().getJugadores()) {
+			String[] par = {jugador.getUsername(), jugador.getColor()};
+			lista.add(par);
+		}
+		JSONArray jsArray = new JSONArray(lista);
+		JSONObject jso=new JSONObject();
+		jso.put("tipo", "DIFUSION");
+		jso.put("mensaje", "Ha llegado "+usuario.getUsername());
+		jso.put("jugadores", jsArray);
 
-		broadcast("Ha llegado " + usuario.getUsername());
+		//broadcast("Ha llegado " + usuario.getUsername());
 		
 		Partida partida=usuario.getPartida();
+		partida.broadcast(jso);
 		if (partida.isReady())
 			partida.comenzar();
 	}
@@ -64,6 +78,16 @@ public class WSPartidas {
 					
 				}
 			}
+		}
+		else if(jso.get("tipo").equals("MENSAJE")){
+			   int idPartida=usuario.getPartida().getId();
+			   String remitente=usuario.getUsername();
+			   String cuerpoMensaje=jso.getString("cuerpoMensaje");
+			   try {
+			    JSONObject mensaje=Manager.get().enviarMensaje(idPartida, remitente, cuerpoMensaje);
+			   } catch (Exception e) {
+				   
+			   }
 		}
 		else if(jso.get("tipo").equals("TIMEOUT")) {
 			usuario.getPartida().timeout(usuario);

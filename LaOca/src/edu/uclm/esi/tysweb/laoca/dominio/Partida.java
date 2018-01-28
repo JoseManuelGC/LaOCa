@@ -110,6 +110,7 @@ public class Partida {
 				this.ganador=this.jugadores.get(0);
 				result.put("ganador", this.ganador.getUsername());
 			}
+			jugador.enviar(result);
 		}
 		if (destino.getPos()==62) { // Llegada
 			this.ganador=jugador;
@@ -152,7 +153,7 @@ public class Partida {
 		jugador.setColor(colores.remove(0));
 	}
 	
-	void broadcast(JSONObject jso) {
+	public void broadcast(JSONObject jso) {
 		for (int i=jugadores.size()-1; i>=0; i--) {
 			Usuario jugador=jugadores.get(i);
 			try {
@@ -177,17 +178,17 @@ public class Partida {
 	
 	public JSONObject timeout(Usuario jugador) {
 		JSONObject result=new JSONObject();
-		jugador.setPartida(null);
-		jugador.setColor(null);
 		result.put("tipo", "DIFUSION");
 		result.put("mensaje", jugador.getUsername() + " eliminado por timeout");
-		this.jugadores.remove(jugador);
 		this.jugadorConElTurno--;
 		if (this.jugadores.size()==1) {
 			this.ganador=this.jugadores.get(0);
 			result.put("ganador", this.ganador.getUsername());
 		}
 		broadcast(result);
+		jugador.setPartida(null);
+		jugador.setColor(null);
+		this.jugadores.remove(jugador);
 		return result;
 	}
 

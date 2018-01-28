@@ -11,6 +11,10 @@
 	try {
 		String username=jso.optString("username");
 		String password=jso.optString("password");
+		if(jso.optBoolean("remember")==true){
+			   Cookie cookieLogin=new Cookie("username", username);
+			   response.addCookie(cookieLogin);
+		}
 		comprobarCampos(username, password);
 		Usuario usuario=Manager.get().login(username, password);
 		session.setAttribute("usuario", usuario);

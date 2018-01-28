@@ -8,6 +8,9 @@ function registrar() {
 			if (respuesta.result=="OK"){
 				index.setAttribute("style", "display:none");
 				juego.setAttribute("style", "display:block");
+				botonSalirCuenta.setAttribute("style", "display:block");
+				botonSalirGoogle.setAttribute("style", "display:none");
+				mostrarDatosUsuario(usernameRegister.value);
 			}
 			else{
 				document.getElementById("feedbackRegisterText").innerHTML = respuesta.mensaje;
@@ -31,6 +34,9 @@ function login() {
 			if (respuesta.result=="OK"){
 				index.setAttribute("style", "display:none");
 				juego.setAttribute("style", "display:block");
+				mostrarDatosUsuario(usernameLogin.value);
+				botonSalirCuenta.setAttribute("style", "display:block");
+				botonSalirGoogle.setAttribute("style", "display:none");
 			}	
 			else{
 				document.getElementById("feedbackLoginText").innerHTML = respuesta.mensaje;
@@ -39,7 +45,7 @@ function login() {
 		}
 	};
 	var p = {
-		username : usernameLogin.value, password : passwordLogin.value 
+		username : usernameLogin.value, password : passwordLogin.value , remember: remember.checked
 	};
 	request.send("p=" + JSON.stringify(p));
 }
@@ -54,6 +60,9 @@ function invitado() {
 			if (respuesta.result=="OK"){
 				index.setAttribute("style", "display:none");
 				juego.setAttribute("style", "display:block");
+				botonSalirCuenta.setAttribute("style", "display:block");
+				botonSalirGoogle.setAttribute("style", "display:none");
+				mostrarDatosUsuario(respuesta.username);
 			}	
 			else{
 				document.getElementById("feedbackInvitadoText").innerHTML = respuesta.mensaje;
@@ -153,9 +162,7 @@ function actualizarPassword() {
 		$('#feedbackRecuperar').addClass('alert-danger');
 		document.getElementById("feedbackRecuperarText").innerHTML = "El token no es válido";
 		feedbackRecuperar.setAttribute("style", "display:block");
-	}
-		
-		
+	}		
 }
 
 function getURL(){
@@ -222,4 +229,105 @@ function estaConectado() {
 		}
 	};
 	request.send();		
+}
+
+function leerCookieLogin(){
+	 var cookieLogin=null;
+	 var cookies=document.cookie.split(";");
+	 for (var i=0; i<cookies.length; i++){
+	  var cookie=cookies[i];
+	  while(cookie.charAt(0)==' ')
+	   cookie=cookie.substring(1);
+	  if(cookie.indexOf("username")==0)
+	   cookieLogin=cookie.substring("username".length+1, cookie.length);
+	 }
+	 if(cookieLogin!=null){
+	  usernameLogin.value=cookieLogin;
+   }
+}
+
+function registrarGoogle(googleUser) {
+	var profile = googleUser.getBasicProfile();
+	console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead. console.log('Name: ' + profile.getName());
+	console.log('Image URL: ' + profile.getImageUrl());
+	console.log('Email: ' + profile.getEmail());
+	var request = new XMLHttpRequest();
+	request.open("post", "registrarGoogle.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK"){
+				index.setAttribute("style", "display:none");
+				juego.setAttribute("style", "display:block");
+				botonSalirGoogle.setAttribute("style", "display:block");
+				botonSalirCuenta.setAttribute("style", "display:none");
+				mostrarDatosUsuario(profile.getName());
+			}
+			else{
+				document.getElementById("feedbackRegisterText").innerHTML = respuesta.mensaje;
+				feedbackRegister.setAttribute("style", "display:block");
+			}
+		}
+	};	
+	var p = {
+		username: profile.getName(), email : profile.getEmail()
+	};
+	request.send("p=" + JSON.stringify(p));
+}
+
+function onSignIn(googleUser) {
+	var profile = googleUser.getBasicProfile();
+	console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead. console.log('Name: ' + profile.getName());
+	console.log('Image URL: ' + profile.getImageUrl());
+	console.log('Email: ' + profile.getEmail());
+	var request = new XMLHttpRequest();	
+	request.open("post", "loginGoogle.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK"){
+				index.setAttribute("style", "display:none");
+				juego.setAttribute("style", "display:block");
+				botonSalirGoogle.setAttribute("style", "display:block");
+				botonSalirCuenta.setAttribute("style", "display:none");
+				mostrarDatosUsuario(profile.getName());
+			}	
+			else{
+				document.getElementById("feedbackLoginText").innerHTML = respuesta.mensaje;
+				feedbackLogin.setAttribute("style", "display:block");
+			}
+		}
+	};
+	var p = {	
+		username : profile.getName(), email : profile.getEmail()
+	};
+	request.send("p=" + JSON.stringify(p));
+}
+
+function mostrarDatosUsuario(username){
+	nombreUsuario.innerHTML = username;
+}
+
+function salirCuenta(){
+	volverInicio();
+}
+function volverInicio(){
+	index.setAttribute("style", "display:block");
+	juego.setAttribute("style", "display:none");
+	usernameLogin.value = "";
+	passwordLogin.value = "";
+	remember.checked = false;
+	feedbackLogin.setAttribute("style", "display:none");
+	usernameRegister.value = "";
+	emailRegister.value = "";
+	passwordRegister1.value = "";
+	passwordRegister2.value = "";
+	feedbackRegister.setAttribute("style", "display:none");
+	feedbackInvitado.setAttribute("style", "display:none");
+	emailRecuperacion.value = "";
+	feedbackRecuperacion.setAttribute("style", "display:none");
+	leerCookieLogin();
+	$('.panel-collapse.in').collapse('hide');
 }

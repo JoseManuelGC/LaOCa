@@ -13,6 +13,7 @@
 		respuesta.put("result", "OK");
 		session.setAttribute("usuario", usuario);
 		session.setAttribute("username", usuario.getUsername());
+		respuesta.put("username", usuario.getUsername());
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");

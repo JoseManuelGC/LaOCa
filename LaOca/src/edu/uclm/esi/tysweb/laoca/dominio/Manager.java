@@ -113,9 +113,11 @@ public class Manager {
 		if (mensaje!=null && mensaje.opt("ganador")!=null) {
 			terminar(partida);
 		}
-		JSONObject jso2=new JSONObject();
-		jso2.put("tipo", "TUTURNO");		
-		partida.getJugadorConElTurno().enviar(jso2);
+		else {
+			JSONObject jso2=new JSONObject();
+			jso2.put("tipo", "TUTURNO");		
+			partida.getJugadorConElTurno().enviar(jso2);
+		}
 		return mensaje;
 	}
 
@@ -126,6 +128,24 @@ public class Manager {
 	
 	public ArrayList getRanking() throws Exception {
 		return UsuarioRegistrado.getRanking();
+	}
+	
+	public JSONObject enviarMensaje(int idPartida, String remitente, String cuerpoMensaje) throws Exception {
+		  Partida partida=this.partidasEnJuego.get(idPartida);
+		  JSONObject mensaje=new JSONObject();
+		  mensaje.put("tipo", "MENSAJE");
+		  mensaje.put("remitente", remitente);
+		  mensaje.put("cuerpoMensaje", cuerpoMensaje);
+		  partida.broadcast(mensaje);
+		  return mensaje;
+	}
+		
+	public Usuario registrarGoogle(String username, String email) throws Exception {
+		UsuarioRegistrado u = new UsuarioRegistrado();
+		u.setUsername(username);
+		u.setEmail(email);
+		u.registrarGoogle();
+		return u;
 	}
 	
 }

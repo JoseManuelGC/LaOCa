@@ -56,7 +56,13 @@ function conectarWebSocket() {
 		mensaje=JSON.parse(mensaje);
 		if (mensaje.tipo=="DIFUSION") {
 			addMensaje(mensaje.mensaje);
-		} else if (mensaje.tipo=="COMIENZO") {			
+			var lista = mensaje.jugadores;
+			jugadores.innerHTML = "";
+			for(var i = 0; i<lista.length;i++){
+				jugadores.innerHTML+="<div class=\"jugadores\" style=\"background-color:"+lista[i][1]+";color:white\">"+lista[i][0]+"</div>";
+			}
+		}
+		else if (mensaje.tipo=="COMIENZO") {			
 			addMensaje("Comienza la partida");
 			var lista = mensaje.jugadores;
 			for(var i = 0; i<lista.length;i++){
@@ -68,11 +74,14 @@ function conectarWebSocket() {
 		} else if (mensaje.tipo=="POSICION"){
 			addMensaje("El jugador "+mensaje.jugador+" está en la "+(mensaje.casillaOrigen+1)+", ha sacado "+mensaje.dado);
 			moverFicha(mensaje.destino, mensaje.color);
+		} else if (mensaje.tipo=="MENSAJE") {
+			   addMensajeChat(mensaje.remitente, mensaje.cuerpoMensaje);
 		} else if (mensaje.tipo=="FIN"){
 			btnDado.setAttribute("style", "display:none");
 			myProgress.setAttribute("style", "display:none");
 			clearInterval(timeout);
 			addMensaje("¡¡¡El jugador "+mensaje.ganador+" ha ganado!!!");
+			ws.close();
 		}
 	}	
 }
@@ -192,3 +201,20 @@ function actualizarFichas(color, posicion){
 	        break;
 	}
 }
+
+function enviarMensaje(){
+	 var cuerpoMensaje=cajaMensaje.value;
+	 if (cuerpoMensaje.length==0) {
+	  return;
+	 }
+	 var mensaje={tipo: "MENSAJE", cuerpoMensaje: cuerpoMensaje};
+	 ws.send(JSON.stringify(mensaje));
+	 cajaMensaje.value="";
+}
+
+function addMensajeChat(remitente, cuerpoMensaje) {
+	 var texto=areaChat.innerHTML;
+	 texto=texto+"\n" + remitente + ": " + cuerpoMensaje;
+	 areaChat.innerHTML=texto;
+}
+

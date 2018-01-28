@@ -303,4 +303,52 @@ public class DAOUsuario {
 		}
 		connection.close();
 	}
+	
+	public static UsuarioRegistrado registrarGoogle(UsuarioRegistrado usuario) throws Exception {
+		MongoClient connection = MongoBroker.get().getConnection();
+		MongoDatabase db = connection.getDatabase("oca");
+		if(db.getCollection("usuarios")==null)
+			db.createCollection("usuarios");
+		MongoCollection<BsonDocument> usuarios = db.getCollection("usuarios", BsonDocument.class);
+		BsonDocument criterioUsername = new BsonDocument();
+		criterioUsername.append("username", new BsonString(usuario.getUsername()));
+		BsonDocument criterioEmail = new BsonDocument();
+		criterioEmail.append("email", new BsonString(usuario.getEmail()));
+		FindIterable<BsonDocument> resultadoUsername = usuarios.find(criterioUsername);
+		FindIterable<BsonDocument> resultadoEmail = usuarios.find(criterioEmail);
+		if(resultadoUsername.first()!=null || resultadoEmail.first()!=null) {
+			BsonDocument criterio = new BsonDocument();
+			criterio.append("username", new BsonString(usuario.getUsername()));
+			criterio.append("email", new BsonString(usuario.getEmail()));
+			FindIterable<BsonDocument> resultados = usuarios.find(criterio);
+			BsonDocument resultado = new BsonDocument();
+			resultado = resultados.first();
+			if(resultado==null) {
+				connection.close();
+				throw new Exception("Nombre de usuario o email en uso");	
+			}
+			else {
+				if(resultado.containsKey("password")){
+					connection.close();
+					throw new Exception("Nombre de usuario o email en uso");
+				}
+				else {
+					usuario.setUsername(resultado.getString("username").getValue());
+					usuario.setEmail(resultado.getString("email").getValue());
+					usuario.setVictorias(resultado.getInt32("victorias").getValue());
+					usuario.setDerrotas(resultado.getInt32("derrotas").getValue());
+				}
+			}
+		}
+		else {
+			BsonDocument bUsuario = new BsonDocument();
+			bUsuario.append("username", new BsonString(usuario.getUsername()));
+			bUsuario.append("email", new BsonString(usuario.getEmail()));
+			bUsuario.append("victorias", new BsonInt32(usuario.getVictorias()));
+			bUsuario.append("derrotas", new BsonInt32(usuario.getDerrotas()));
+			usuarios.insertOne(bUsuario);
+		}
+		connection.close();
+		return usuario;
+	}
 }
