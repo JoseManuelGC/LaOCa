@@ -331,3 +331,4 @@ function volverInicio(){
 	leerCookieLogin();
 	$('.panel-collapse.in').collapse('hide');
 }
+

@@ -269,6 +269,11 @@
   border: 0.1vh solid black;
   background: orange;
 }
+.thumb {	
+    height: 300px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+}
 	</style>
 </head>
 <body onload="leerCookieLogin();">
@@ -404,6 +409,11 @@
    <div class="col-md-6" id="botonSalirCuenta" style="display:none">   	
 		<input type="button" onclick="salirCuenta()" name="salirCuenta" id="salirCuenta" tabindex="4" class="form-control btn btn-primary" value="Cerrar sesión">
    </div>
+   </div>
+   <div class="row">
+   <input type="file" id="files" name="files[]" />
+        <br />
+        <output id="list"></output>
    </div>
    <br>
     <div class="row">
@@ -620,6 +630,39 @@
 
 
 <script>
+function archivo(evt) {
+    var files = evt.target.files; 
+    for (var i = 0, f; f = files[i]; i++) {
+      if (!f.type.match('image.*')) {
+          continue;
+      }
+      var reader = new FileReader();
+      reader.onload = (function(theFile) {
+          return function(e) {
+           document.getElementById("list").innerHTML = ['<img id="imagen" class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+           seleccionar();
+          };
+      })(f);
+      reader.readAsDataURL(f);
+    }
+}
+document.getElementById('files').addEventListener('change', archivo, false);
+
+function seleccionar(){$(function($){
+	  $('#imagen').Jcrop({
+	    onChange:   showCoords,
+	    onSelect:   showCoords
+	  });
+
+	});
+}
+	
+function showCoords(c)
+{
+  alert('x='+ c.x +' y='+ c.y +' x2='+ c.x2 +' y2='+ c.y2)
+  alert('w='+c.w +' h='+ c.h)
+};
+
 function signOut() {
 	gapi.auth2.getAuthInstance().disconnect();
 	volverInicio();
