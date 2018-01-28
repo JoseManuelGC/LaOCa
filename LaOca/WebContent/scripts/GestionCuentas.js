@@ -194,9 +194,9 @@ function ranking() {
 					feedbackRanking.setAttribute("style", "display:none");
 					var lista = respuesta.lista;
 					if (lista.length>0){
-						var table =	'<thead><tr><th>#</th><th>Usuario</th><th>Victorias</th></tr></thead>';
+						var table =	'<thead><tr><th>#</th><th>Usuario</th><th>Victorias</th><th>Derrotas</th></tr></thead>';
 						for(var i = 0; i<lista.length;i++){
-							table += '<tbody><tr><td>'+(i+1)+'</td><td>'+lista[i][0]+'</td><td>'+lista[i][1]+'</td></tr>';
+							table += '<tbody><tr><td>'+(i+1)+'</td><td>'+lista[i][0]+'</td><td>'+lista[i][1]+'</td><td>'+lista[i][2]+'</td></tr>';
 						}
 						table += '</tbody>';
 						$(document).find('.table').html(table);
@@ -232,18 +232,20 @@ function estaConectado() {
 }
 
 function leerCookieLogin(){
-	 var cookieLogin=null;
+	 var cookie=null;
 	 var cookies=document.cookie.split(";");
 	 for (var i=0; i<cookies.length; i++){
-	  var cookie=cookies[i];
+	  cookie=cookies[i];
 	  while(cookie.charAt(0)==' ')
-	   cookie=cookie.substring(1);
-	  if(cookie.indexOf("username")==0)
-	   cookieLogin=cookie.substring("username".length+1, cookie.length);
+		  cookie=cookie.substring(1);
+	  if(cookie.indexOf("login")==0){
+	   var login=cookie.substring("login".length+1, cookie.length);
+	   var values = login.split(":|:|:|:");
+	   usernameLogin.value = values[0];
+	   passwordLogin.value = values[1];
+	  }
+	 
 	 }
-	 if(cookieLogin!=null){
-	  usernameLogin.value=cookieLogin;
-   }
 }
 
 function registrarGoogle(googleUser) {
@@ -330,5 +332,28 @@ function volverInicio(){
 	feedbackRecuperacion.setAttribute("style", "display:none");
 	leerCookieLogin();
 	$('.panel-collapse.in').collapse('hide');
+	areaChat.innerHTML="";
+	jugadores.innerHTML="";
+}
+
+function cambiarAvatar(){
+	var request = new XMLHttpRequest();
+	request.open("post", "cambiarAvatar.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK"){
+				
+			}
+			else{
+				
+			}
+		}
+	};	
+	var p = {
+		x: x.value, y : y.value, w: w.value, h: h.value , imagen: target.src
+	};
+	request.send("p=" + JSON.stringify(p));
 }
 

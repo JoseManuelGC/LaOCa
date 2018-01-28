@@ -6,10 +6,10 @@ function crearPartida() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK") {
-				divMensajes.innerHTML+=respuesta.mensaje;
+				addMensaje(respuesta.mensaje);
 				conectarWebSocket();
 			} else {
-				divMensajes.innerHTML= respuesta.mensaje;
+				addMensaje(respuesta.mensaje);
 			}				
 		}
 	};
@@ -27,10 +27,10 @@ function unirse() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK") {
-				divMensajes.innerHTML=respuesta.mensaje;
+				addMensaje(respuesta.mensaje);
 				conectarWebSocket();
 			} else {
-				divMensajes.innerHTML="Error: " + respuesta.mensaje;
+				addMensaje(respuesta.mensaje);
 			}
 		}
 	};
@@ -62,7 +62,8 @@ function conectarWebSocket() {
 				jugadores.innerHTML+="<div class=\"jugadores\" style=\"background-color:"+lista[i][1]+";color:white\">"+lista[i][0]+"</div>";
 			}
 		}
-		else if (mensaje.tipo=="COMIENZO") {			
+		else if (mensaje.tipo=="COMIENZO") {
+			areaChat.innerHTML="";
 			addMensaje("Comienza la partida");
 			var lista = mensaje.jugadores;
 			for(var i = 0; i<lista.length;i++){
@@ -102,7 +103,8 @@ function tuTurno() {
 }
 
 function addMensaje(texto) {
-	divMensajes.innerHTML+= texto+"<br>";
+	areaChat.innerHTML=areaChat.innerHTML+"<b>"+texto+"</b><br>";
+    areaChat.scrollTop = areaChat.scrollHeight;
 }
 
 var result;
@@ -213,8 +215,7 @@ function enviarMensaje(){
 }
 
 function addMensajeChat(remitente, cuerpoMensaje) {
-	 var texto=areaChat.innerHTML;
-	 texto=texto+"\n" + remitente + ": " + cuerpoMensaje;
-	 areaChat.innerHTML=texto;
+     areaChat.innerHTML=areaChat.innerHTML+"<b>"+remitente+": </b>"+cuerpoMensaje+"<br>";
+     areaChat.scrollTop = areaChat.scrollHeight;
 }
 

@@ -12,7 +12,7 @@
 		String username=jso.optString("username");
 		String password=jso.optString("password");
 		if(jso.optBoolean("remember")==true){
-			   Cookie cookieLogin=new Cookie("username", username);
+			   Cookie cookieLogin=new Cookie("login", username+":|:|:|:"+password);
 			   response.addCookie(cookieLogin);
 		}
 		comprobarCampos(username, password);

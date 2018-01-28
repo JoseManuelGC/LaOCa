@@ -32,8 +32,22 @@ private void comprobarCredenciales(String username, String email, String pwd1, S
 		throw new Exception("Debe rellenar todos los campos");
 	if (username.indexOf("@")!=-1)
 		throw new Exception("El nombre de usuario no puede contener @");
+	if (username.indexOf(";")!=-1)
+		throw new Exception("El nombre de usuario no puede contener ;");
+	if (username.indexOf(" ")!=-1)
+		throw new Exception("El nombre de usuario no puede contener espacios");
+	if (username.indexOf("=")!=-1)
+		throw new Exception("El nombre de usuario no puede contener =");
+	if (email.indexOf(" ")!=-1)
+		throw new Exception("La dirección de correo no puede contener espacios");
 	if (email.indexOf("@")==-1)
 		throw new Exception("Dirección de correo no válida");
+	if (email.indexOf(";")!=-1)
+		throw new Exception("La dirección de correo no puede contener ;");
+	if (email.indexOf("=")!=-1)
+		throw new Exception("La dirección de correo no puede contener =");
+	if (pwd1.indexOf(" ")!=-1)
+		throw new Exception("La contraseña no puede contener espacios");
 	if (pwd1.length()<4 || pwd2.length()<4)
 		throw new Exception("La contraseña debe tener al menos 4 caracteres");
 	if (!pwd1.equals(pwd2))

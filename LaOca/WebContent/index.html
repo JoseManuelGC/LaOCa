@@ -5,7 +5,18 @@
 	<meta name="google-signin-client_id" content="44177352983-6mks1hp3dqamengp5aacdvct8aali1r3.apps.googleusercontent.com">
 	<title>La Oca</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.css">
 	<style type="text/css">
+		#areaChat{
+		height: 50vh;
+		border: 1px solid black;
+		overflow: auto;
+		word-wrap: break-word;
+		white-space: pre-wrap;
+		}
+		.img-border {
+		    border: 4px solid black;
+		}
 		#button-login{
 			background-color:#FF7171;
 		}
@@ -409,16 +420,40 @@
    <div class="col-md-6" id="botonSalirCuenta" style="display:none">   	
 		<input type="button" onclick="salirCuenta()" name="salirCuenta" id="salirCuenta" tabindex="4" class="form-control btn btn-primary" value="Cerrar sesión">
    </div>
-   </div>
-   <div class="row">
-   <input type="file" id="files" name="files[]" />
-        <br />
-        <output id="list"></output>
-   </div>
+   </div>  	
+  
    <br>
     <div class="row">
     <div class="col-md-12" id="cambiar">
     	<div class="panel-group" id="accordion">
+    	<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#seleccionarAvatar">
+          Seleccionar avatar</a>
+        </h4>
+      </div>
+      <div id="seleccionarAvatar" class="panel-collapse collapse">
+         <div class="row">
+   <div class="col-md-12"> 
+  <div class="img" id="imagenContainer">
+  </div>      
+    <div id="form-container">
+      <form id="cropimg" name="cropimg" method="post" action="crop.php" target="_blank">
+        <input id="x" name="x">
+        <input id="y" name="y">
+        <input id="w" name="w">
+        <input id="h" name="h">
+        <input type="button" onclick="cambiarAvatar()" name="botonCambiarAvatar" id="botonCambiarAvatar" tabindex="4" class="form-control btn btn-primary" value="Cambiar avatar">
+        <input type="file" id="files" name="files[]" />
+        <br />
+        <output id="list"></output>
+      </form>
+    </div>
+</div>
+   </div>
+      </div>
+    </div>
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
@@ -609,14 +644,13 @@
 	    </div>
 	   </div> 
 
-	  </div>
+  </div>
    <div class="col-md-3" id="chat">
-   Chat
    <div class="row">
    	<div id="conversacion">
+   	<div id="areaChat"></div>
    	<input type="text" name="cajaMensaje" id="cajaMensaje" tabindex="1" class="form-control" placeholder="Escriba su mensaje" value="">
    	<input type="button" onclick="enviarMensaje()" name="buttonEnviar" id="buttonEnviar" class="form-control btn btn-primary" value="Enviar">
-   	<div id="areaChat"></div>
    	</div>
    </div>
    <div class="row">
@@ -639,29 +673,14 @@ function archivo(evt) {
       var reader = new FileReader();
       reader.onload = (function(theFile) {
           return function(e) {
-           document.getElementById("list").innerHTML = ['<img id="imagen" class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
-           seleccionar();
+           document.getElementById("imagenContainer").innerHTML = ['<img class="img-responsive" id="target" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+           llamarCrop();
           };
       })(f);
       reader.readAsDataURL(f);
     }
 }
 document.getElementById('files').addEventListener('change', archivo, false);
-
-function seleccionar(){$(function($){
-	  $('#imagen').Jcrop({
-	    onChange:   showCoords,
-	    onSelect:   showCoords
-	  });
-
-	});
-}
-	
-function showCoords(c)
-{
-  alert('x='+ c.x +' y='+ c.y +' x2='+ c.x2 +' y2='+ c.y2)
-  alert('w='+c.w +' h='+ c.h)
-};
 
 function signOut() {
 	gapi.auth2.getAuthInstance().disconnect();
@@ -732,7 +751,6 @@ function cambiar(){
 		});
 	});	
 }
-
 </script>
 	
 	<script>
@@ -744,6 +762,58 @@ function cambiar(){
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   	<script src="https://apis.google.com/js/platform.js" async defer></script>
+  	<script type="text/javascript" src="scripts/jquery.Jcrop.js"></script>
+  <script type="text/javascript" src="scripts/cropsetup.js"></script>
+  
+  <script type="text/javascript">
+  function llamarCrop(){
+  jQuery(function($){
+	// Create variables (in this scope) to hold the API and image size
+	    var jcrop_api,
+	        boundx,
+	        boundy,
+			$preview = $('#target'),
+	        $pcnt = $('#target'),
+	        $pimg = $('#preview-pane .preview-container img'),
+
+	        xsize = $pcnt.width(),
+	        ysize = $pcnt.height();
+	    
+	    console.log('init',[xsize,ysize]);
+	    $('#target').Jcrop({
+	      onChange: showCoords,
+	      onSelect: showCoords,
+	      onRelease: clearCoords,
+	      aspectRatio: 1
+	    },function(){
+	      // Use the API to get the real image size
+	      var bounds = this.getBounds();
+	      boundx = bounds[0];
+	      boundy = bounds[1];
+	      // Store the API in the jcrop_api variable
+	      jcrop_api = this;
+
+	      // Move the preview into the jcrop container for css positioning
+	      $preview.appendTo(jcrop_api.ui.holder);
+	    });
+  });
+  };
+  
+  function showCoords(c)
+  {
+    $('#x').val(c.x);
+    $('#y').val(c.y);
+    $('#w').val(c.w);
+    $('#h').val(c.h);
+  }
+
+  function clearCoords()
+  {
+    $('#coords input').val('');
+  }
+
+  
+  </script>
   	
 </body>
 </html>

@@ -90,7 +90,15 @@ public class WSPartidas {
 			   }
 		}
 		else if(jso.get("tipo").equals("TIMEOUT")) {
-			usuario.getPartida().timeout(usuario);
+			if(usuario.getUsername()==usuario.getPartida().getJugadorConElTurno().getUsername()) {
+				try {
+					JSONObject mensaje=Manager.get().timeout(usuario.getPartida().getId(), usuario.getUsername());
+				} catch (Exception e) {
+					
+				}
+				
+			}
+			
 		}
 	}
 

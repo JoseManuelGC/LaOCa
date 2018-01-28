@@ -144,8 +144,22 @@ public class Manager {
 		UsuarioRegistrado u = new UsuarioRegistrado();
 		u.setUsername(username);
 		u.setEmail(email);
-		u.registrarGoogle();
+		u.registrarGoogle();		
 		return u;
+	}
+
+	public JSONObject timeout(int idPartida, String username) throws Exception {
+		Partida partida=this.partidasEnJuego.get(idPartida);
+		JSONObject mensaje=partida.timeout(username);
+		if(mensaje!=null && mensaje.opt("ganador")!=null) {
+			terminar(partida);
+		}
+		else {
+			JSONObject jso2=new JSONObject();
+			jso2.put("tipo", "TUTURNO");		
+			partida.getJugadorConElTurno().enviar(jso2);
+		}
+		return mensaje;
 	}
 	
 }

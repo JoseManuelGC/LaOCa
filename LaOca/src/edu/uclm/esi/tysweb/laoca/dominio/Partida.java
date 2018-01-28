@@ -176,10 +176,12 @@ public class Partida {
 		return this.ganador;
 	}
 	
-	public JSONObject timeout(Usuario jugador) {
+	public JSONObject timeout(String nombreJugador) throws Exception {
+		Usuario jugador=findJugador(nombreJugador);
 		JSONObject result=new JSONObject();
 		result.put("tipo", "DIFUSION");
 		result.put("mensaje", jugador.getUsername() + " eliminado por timeout");
+		this.jugadores.remove(jugador);
 		this.jugadorConElTurno--;
 		if (this.jugadores.size()==1) {
 			this.ganador=this.jugadores.get(0);
@@ -188,7 +190,7 @@ public class Partida {
 		broadcast(result);
 		jugador.setPartida(null);
 		jugador.setColor(null);
-		this.jugadores.remove(jugador);
+		jugador.addResultado("derrota");
 		return result;
 	}
 

@@ -270,7 +270,7 @@ public class DAOUsuario {
 			MongoCursor<BsonDocument> cursor = resultados.iterator();
 			while (cursor.hasNext()) {
 				BsonDocument doc = cursor.next();
-			    String[] resultado = {doc.getString("username").getValue(), String.valueOf(doc.getInt32("victorias").getValue())};
+			    String[] resultado = {doc.getString("username").getValue(), String.valueOf(doc.getInt32("victorias").getValue()), String.valueOf(doc.getInt32("derrotas").getValue())};
 			    lista.add(resultado);
 			}
 		}
