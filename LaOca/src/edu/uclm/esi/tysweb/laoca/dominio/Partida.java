@@ -63,7 +63,8 @@ public class Partida {
 		jso.put("jugadores", jsArray);
 		broadcast(jso);
 		JSONObject jso2=new JSONObject();
-		jso2.put("tipo", "TUTURNO");		
+		jso2.put("tipo", "TUTURNO");
+		jso2.put("jugador", getJugadorConElTurno().getUsername());
 		getJugadorConElTurno().enviar(jso2);
 	}
 
@@ -118,7 +119,7 @@ public class Partida {
 		}
 		int turnosSinTirar=destino.getTurnosSinTirar();
 		if (turnosSinTirar>0) {
-			result.put("mensajeAdicional", jugador.getUsername() + " est√° " + turnosSinTirar + " turnos sin tirar porque ha ca√≠do en ");
+			result.put("mensajeAdicional", jugador.getUsername() + " est· " + turnosSinTirar + " turnos sin tirar porque ha caÌdo en ");
 			jugador.setTurnosSinTirar(destino.getTurnosSinTirar());
 		}
 		result.put("jugadorConElTurno", pasarTurno(conservarTurno));

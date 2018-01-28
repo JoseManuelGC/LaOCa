@@ -69,12 +69,15 @@ function conectarWebSocket() {
 			for(var i = 0; i<lista.length;i++){
 				actualizarFichas(lista[i][1], 1);
 			}
+			verTurno(mensaje.jugadorConElTurno);
 			comenzar();
 		} else if (mensaje.tipo=="TUTURNO"){
 			tuTurno();
+			verTurno(mensaje.jugador);
 		} else if (mensaje.tipo=="POSICION"){
 			addMensaje("El jugador "+mensaje.jugador+" está en la "+(mensaje.casillaOrigen+1)+", ha sacado "+mensaje.dado);
 			moverFicha(mensaje.destino, mensaje.color);
+			verTurno(mensaje.jugadorConElTurno);
 		} else if (mensaje.tipo=="MENSAJE") {
 			   addMensajeChat(mensaje.remitente, mensaje.cuerpoMensaje);
 		} else if (mensaje.tipo=="FIN"){
@@ -201,6 +204,15 @@ function actualizarFichas(color, posicion){
 	    case "red":
 	        fichas.red = posicion;
 	        break;
+	}
+}
+
+function verTurno(jugador){
+	var elementos = document.getElementsByClassName("jugadores");
+	for (i = 0; i < elementos.length; i++){
+		elementos[i].style.fontSize = "90%";
+		if(elementos[i].innerHTML==jugador)
+			elementos[i].style.fontSize = "140%";
 	}
 }
 

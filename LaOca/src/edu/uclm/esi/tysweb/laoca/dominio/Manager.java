@@ -115,7 +115,8 @@ public class Manager {
 		}
 		else {
 			JSONObject jso2=new JSONObject();
-			jso2.put("tipo", "TUTURNO");		
+			jso2.put("tipo", "TUTURNO");	
+			jso2.put("jugador", partida.getJugadorConElTurno().getUsername());
 			partida.getJugadorConElTurno().enviar(jso2);
 		}
 		return mensaje;
