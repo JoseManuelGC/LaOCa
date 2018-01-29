@@ -1,10 +1,24 @@
 package edu.uclm.esi.tysweb.laoca.dominio;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.FileUtils;
+
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.xerces.util.URI;
 import org.json.JSONObject;
+
 
 public class Manager {
 	private ConcurrentHashMap<String, Usuario> usuarios;
@@ -161,6 +175,43 @@ public class Manager {
 			partida.getJugadorConElTurno().enviar(jso2);
 		}
 		return mensaje;
+	}
+	
+	public void cambiarAvatar(InputStream is) throws Exception {
+		
+		/*
+	    byte[] imageData = Base64.decodeBase64(file2);
+	    InputStream inputStream = new ByteArrayInputStream(imageData);
+	    BufferedImage imagen = ImageIO.read(inputStream);
+	    //BufferedImage avatar = img.getSubimage(x1, y1, w, h);
+	    File outputfile = new File("image.jpeg");
+	    ImageIO.write(imagen, "jpg", outputfile);
+		
+		byte[] btDataFile = new sun.misc.BASE64Decoder().decodeBuffer(img);
+		File of = new File("yourFile.jpg");
+		FileOutputStream osf = new FileOutputStream(of);
+		osf.write(btDataFile);
+		osf.flush();
+		*/
+		
+		/*
+		FUNCIONA   FUNCIONA
+		File of = new File("D:\\imagen.jpg");
+		byte[] buffer = new byte[16 * 1024];
+		OutputStream output = new FileOutputStream(of);
+		int bytesRead;
+		while ((bytesRead = is.read(buffer)) != -1){
+		    System.out.println(bytesRead);
+		    output.write(buffer, 0, bytesRead);
+		}
+		output.close();
+		is.close();
+		FUNCIONA FUNCIONA*/
+		
+		BufferedImage imBuff = ImageIO.read(is);
+		BufferedImage avatar = imBuff.getSubimage(0, 0, 200, 200);
+		File of = new File("D:\\imagen2.jpg");
+	    ImageIO.write(avatar, "jpg", of);
 	}
 	
 }

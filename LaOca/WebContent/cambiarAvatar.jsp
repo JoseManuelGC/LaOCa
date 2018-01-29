@@ -3,33 +3,33 @@
 
 <%@page import="javax.imageio.ImageIO"%>
 <%@page import="java.awt.image.BufferedImage"%>
-<%@page import="java.io.File"%>
-<%@page import="java.io.ByteArrayInputStream"%>
+<%@page import="java.io.InputStream"%>
+<%@page import="java.sql.Blob"%>
 <%@page import="org.apache.commons.codec.binary.Base64"%>
 <%@ page language="java" contentType="application/json; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
 <%
-	String p=request.getParameter("p");
-	JSONObject jso=new JSONObject(p);
-	
 	JSONObject respuesta=new JSONObject();
-	try {
+	try {/*
 		int x1= Integer.parseInt(jso.optString("x"));
 		int y1= Integer.parseInt(jso.optString("y"));
 	    int w= Integer.parseInt(jso.optString("w"));
 	    int h= Integer.parseInt(jso.optString("h"));
-	    String file = jso.optString("imagen");
+	    */
+	    InputStream is = request.getInputStream();
+	    respuesta.put("result", "OK");
+	    Manager.get().cambiarAvatar(is);
+	    /*
 	    
-	    
-	    String file2 = file.replace("data:image/jpeg;base64,","");
+	    String file2 = file.split(",")[1];
 
 	    byte[] imageData = Base64.decodeBase64(file2);
 	    BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
-	    BufferedImage avatar = img.getSubimage(x1, y1, w, h);
+	    //BufferedImage avatar = img.getSubimage(x1, y1, w, h);
 	    File outputfile = new File("image.jpeg");
-	    ImageIO.write(avatar, "jpg", outputfile);
-	    /*
+	    ImageIO.write(img, "jpg", outputfile);
+	    
 	    String base64Image = file.split(",")[1];
 	    byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Image);
 	    BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageBytes));
@@ -44,7 +44,7 @@
 	    //BufferedImage img = ImageIO.read(bais);
 	    BufferedImage avatar = img.getSubimage(x1, y1, w, h);
 	    File outputfile = new File("image.jpg");
-	    ImageIO.write(avatar, "jpg", outputfile);*/
+	    ImageIO.write(avatar, "jpg", outputfile);
 	    
 		
 		String username=jso.optString("username");
@@ -55,7 +55,7 @@
 		Usuario usuario = Manager.get().registrar(username, email, pwd1);
 		respuesta.put("result", "OK");
 		session.setAttribute("username", usuario.getUsername());
-		session.setAttribute("usuario", usuario);
+		session.setAttribute("usuario", usuario);*/
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");

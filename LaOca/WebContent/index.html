@@ -674,7 +674,9 @@ function archivo(evt) {
       var reader = new FileReader();
       reader.onload = (function(theFile) {
           return function(e) {
-           document.getElementById("imagenContainer").innerHTML = ['<img class="img-responsive" id="target" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+           //document.getElementById("imagenContainer").innerHTML = ['<img class="img-responsive" id="target" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+           
+      		cambiarAvatar(dataURItoBlob(e.target.result));
            llamarCrop();
           };
       })(f);
@@ -682,6 +684,15 @@ function archivo(evt) {
     }
 }
 document.getElementById('files').addEventListener('change', archivo, false);
+
+function dataURItoBlob(dataURI) {
+    var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for(var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+}
 
 function signOut() {
 	gapi.auth2.getAuthInstance().disconnect();

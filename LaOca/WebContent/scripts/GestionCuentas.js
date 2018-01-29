@@ -336,7 +336,7 @@ function volverInicio(){
 	jugadores.innerHTML="";
 }
 
-function cambiarAvatar(){
+function cambiarAvatar(blob){
 	var request = new XMLHttpRequest();
 	request.open("post", "cambiarAvatar.jsp");
 	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -344,16 +344,13 @@ function cambiarAvatar(){
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK"){
-				
+				var a = 3;
 			}
 			else{
-				
+				var b = 4;
 			}
 		}
-	};	
-	var p = {
-		x: x.value, y : y.value, w: w.value, h: h.value , imagen: target.src
 	};
-	request.send("p=" + JSON.stringify(p));
+	request.send(blob);
 }
 
