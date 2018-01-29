@@ -126,7 +126,7 @@ function tirarDado(){
 function move() {
 	var elem = document.getElementById("myBar");   
 	var width = 100;
-	timeout = setInterval(frame, 20);
+	timeout = setInterval(frame, 30);
 	function frame() {
 	    if (width <= 0.1) {
 	    	clearInterval(timeout);
@@ -162,6 +162,11 @@ function pararRotacion(){
 	ws.send(JSON.stringify(mensaje));
 }
 
+function testingDado(dado){
+	var mensaje={tipo: "DADO", puntos: dado};	
+	ws.send(JSON.stringify(mensaje));
+}
+
 function moverFicha(destino, color){
 	borrarFichas();
 	actualizarFichas(color, destino);
@@ -194,6 +199,7 @@ function actualizarFichas(color, posicion){
 	switch(color){
 	    case "orange":
 	        fichas.orange = posicion;
+	        
 	        break;
 	    case "blue":
 	        fichas.blue = posicion;
@@ -208,6 +214,7 @@ function actualizarFichas(color, posicion){
 }
 
 function verTurno(jugador){
+	turnoTesting.innerHTML=jugador;
 	var elementos = document.getElementsByClassName("jugadores");
 	for (i = 0; i < elementos.length; i++){
 		elementos[i].style.fontSize = "90%";
@@ -231,3 +238,9 @@ function addMensajeChat(remitente, cuerpoMensaje) {
      areaChat.scrollTop = areaChat.scrollHeight;
 }
 
+function fichasTesting(){
+	posicion.innerHTML= "<div class=\"fichasTesting\" id=\"posicionBlue\" type=\"hidden\">"+fichas.blue+"</div>";
+	posicion.innerHTML+= "<div class=\"fichasTesting\" id=\"posicionOrange\" type=\"hidden\">"+fichas.orange+"</div>";
+	posicion.innerHTML+= "<div class=\"fichasTesting\" id=\"posicionGreen\" type=\"hidden\">"+fichas.green+"</div>";
+	posicion.innerHTML+= "<div class=\"fichasTesting\" id=\"posicionRed\" type=\"hidden\">"+fichas.red+"</div>";
+}

@@ -11,6 +11,7 @@ function registrar() {
 				botonSalirCuenta.setAttribute("style", "display:block");
 				botonSalirGoogle.setAttribute("style", "display:none");
 				mostrarDatosUsuario(usernameRegister.value);
+				getAvatar();
 			}
 			else{
 				document.getElementById("feedbackRegisterText").innerHTML = respuesta.mensaje;
@@ -336,7 +337,10 @@ function volverInicio(){
 	jugadores.innerHTML="";
 }
 
-function cambiarAvatar(blob){
+function cambiarAvatar(){
+	var blob = dataURItoBlob(document.getElementById("target").src);
+	var elements = document.getElementsByClassName("jcrop-holder");
+	var jcrop = elements[0];
 	var request = new XMLHttpRequest();
 	request.open("post", "cambiarAvatar.jsp");
 	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -344,13 +348,42 @@ function cambiarAvatar(blob){
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK"){
-				var a = 3;
+				
 			}
 			else{
-				var b = 4;
+				
 			}
 		}
 	};
+	request.setRequestHeader("coordenadas", x.value+";"+y.value+";"+w.value+";"+h.value+";"+target.naturalWidth+";"+target.naturalHeight+";"+jcrop.clientWidth+";"+jcrop.clientHeight);
 	request.send(blob);
 }
 
+function getAvatar(){
+	var blob = dataURItoBlob(document.getElementById("target").src);
+	var request = new XMLHttpRequest();
+	request.open("post", "getAvatar.jsp");
+	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	request.onreadystatechange=function() {
+		if (request.readyState==4) {
+			var respuesta=JSON.parse(request.responseText);
+			if (respuesta.result=="OK"){
+				
+			}
+			else{
+				
+			}
+		}
+	};
+	request.setRequestHeader("coordenadas", x.value+";"+y.value+";"+w.value+";"+h.value+";"+target.naturalWidth+";"+target.naturalHeight+";"+jcrop.clientWidth+";"+jcrop.clientHeight);
+	request.send(blob);
+}
+
+function dataURItoBlob(dataURI) {
+    var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for(var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+}

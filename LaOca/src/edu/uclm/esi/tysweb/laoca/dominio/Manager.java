@@ -2,7 +2,9 @@ package edu.uclm.esi.tysweb.laoca.dominio;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.io.FileUtils;
 
@@ -44,7 +47,8 @@ public class Manager {
 		UsuarioRegistrado u = new UsuarioRegistrado();
 		u.setUsername(username);
 		u.setEmail(email);
-		u.insert(password);
+		u.insert(password);		
+		UsuarioRegistrado.setAvatar(new FileInputStream("d://defaultAvatar.jpg"), username);
 		return u;
 	}
 	
@@ -177,7 +181,7 @@ public class Manager {
 		return mensaje;
 	}
 	
-	public void cambiarAvatar(InputStream is) throws Exception {
+	public void cambiarAvatar(InputStream is, int x, int y, int w, int h, int nw, int nh, int jcropw, int jcroph, String username) throws Exception {
 		
 		/*
 	    byte[] imageData = Base64.decodeBase64(file2);
@@ -195,7 +199,7 @@ public class Manager {
 		*/
 		
 		/*
-		FUNCIONA   FUNCIONA
+		//FUNCIONA   FUNCIONA
 		File of = new File("D:\\imagen.jpg");
 		byte[] buffer = new byte[16 * 1024];
 		OutputStream output = new FileOutputStream(of);
@@ -206,13 +210,28 @@ public class Manager {
 		}
 		output.close();
 		is.close();
-		FUNCIONA FUNCIONA*/
+		//FUNCIONA FUNCIONA
+		*/
+		double porcentajeX = (double)x/(double)jcropw;
+		double porcentajeY = (double)y/(double)jcroph;
+		double nuevaX = (double)nw*(double)porcentajeX;
+		double nuevaY = (double)nh*(double)porcentajeY;
+		int finalX = (int)nuevaX;
+		int finalY = (int)nuevaY;
+		double porcentajeW = (double)w/(double)jcropw;
+		double porcentajeH = (double)h/(double)jcroph;
+		double nuevaW = (double)nw*(double)porcentajeW;
+		double nuevaH = (double)nh*(double)porcentajeH;
+		int finalW = (int)nuevaW;
+		int finalH = (int)nuevaH;
 		
 		BufferedImage imBuff = ImageIO.read(is);
-		BufferedImage avatar = imBuff.getSubimage(0, 0, 200, 200);
-		File of = new File("D:\\imagen2.jpg");
+		BufferedImage avatar = imBuff.getSubimage(finalX, finalY, finalW, finalH);
+		File of = new File("D:\\"+username+".jpg");
 	    ImageIO.write(avatar, "jpg", of);
-	}
-	
-}
-
+	    ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    ImageIO.write(avatar, "gif", os);
+	    InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
+	    UsuarioRegistrado.cambiarAvatar(inputStream, username);	    
+	}	
+}	

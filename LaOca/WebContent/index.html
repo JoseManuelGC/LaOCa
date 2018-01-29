@@ -30,7 +30,6 @@
     		padding-top: 2px;
 		    
 		}
-
 		@keyframes spin {
     		0% { transform: rotate(0deg); }
     		100% { transform: rotate(360deg); }
@@ -47,6 +46,10 @@
 		  width: 10px;
 		  height: 30px;
 		  position: absolute;
+		}
+		
+		.fichasTesting{
+			color: white;
 		}
 		.square {
   border: 0.5vh solid gray;
@@ -72,7 +75,7 @@
   padding:0;
   margin:auto;
   box-sizing: border-box;
-}
+ }
 .normal {
   background-color: white;
   height: 11.1111%;
@@ -523,6 +526,10 @@
                 </div>
               </div>
            </div>
+           <div id="posicion" type="hidden" style="visible:none">
+   </div>
+   <div class="fichasTesting" id="turnoTesting" type="hidden" style="visible:none">
+   </div>
    </div>
    </div>
    </div>
@@ -674,9 +681,9 @@ function archivo(evt) {
       var reader = new FileReader();
       reader.onload = (function(theFile) {
           return function(e) {
-           //document.getElementById("imagenContainer").innerHTML = ['<img class="img-responsive" id="target" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+           document.getElementById("imagenContainer").innerHTML = ['<img class="img-responsive" id="target" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
            
-      		cambiarAvatar(dataURItoBlob(e.target.result));
+      		//cambiarAvatar(dataURItoBlob(e.target.result));
            llamarCrop();
           };
       })(f);
@@ -685,20 +692,11 @@ function archivo(evt) {
 }
 document.getElementById('files').addEventListener('change', archivo, false);
 
-function dataURItoBlob(dataURI) {
-    var binary = atob(dataURI.split(',')[1]);
-    var array = [];
-    for(var i = 0; i < binary.length; i++) {
-        array.push(binary.charCodeAt(i));
-    }
-    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
-}
 
 function signOut() {
 	gapi.auth2.getAuthInstance().disconnect();
 	volverInicio();
 }
-
 function cambiar(){
 	$(function() {
 	    $('#login-form-link').click(function(e) {
@@ -787,7 +785,6 @@ function cambiar(){
 			$preview = $('#target'),
 	        $pcnt = $('#target'),
 	        $pimg = $('#preview-pane .preview-container img'),
-
 	        xsize = $pcnt.width(),
 	        ysize = $pcnt.height();
 	    
@@ -804,7 +801,6 @@ function cambiar(){
 	      boundy = bounds[1];
 	      // Store the API in the jcrop_api variable
 	      jcrop_api = this;
-
 	      // Move the preview into the jcrop container for css positioning
 	      $preview.appendTo(jcrop_api.ui.holder);
 	    });
@@ -818,12 +814,10 @@ function cambiar(){
     $('#w').val(c.w);
     $('#h').val(c.h);
   }
-
   function clearCoords()
   {
     $('#coords input').val('');
   }
-
   
   </script>
   	

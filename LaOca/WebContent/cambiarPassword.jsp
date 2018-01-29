@@ -9,7 +9,8 @@
 	
 	JSONObject respuesta=new JSONObject();
 	try {
-		String username=jso.optString("username");
+		Usuario usuario = (Usuario) session.getAttribute("usuario");
+		String username = usuario.getUsername();
 		String passwordActual=jso.optString("passwordActual");
 		String passwordNueva1=jso.optString("passwordNueva1");
 		String passwordNueva2=jso.optString("passwordNueva2");

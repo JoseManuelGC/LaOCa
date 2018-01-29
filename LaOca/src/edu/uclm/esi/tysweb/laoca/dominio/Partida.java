@@ -52,7 +52,8 @@ public class Partida {
 		JSONObject jso=new JSONObject();
 		jso.put("tipo", "COMIENZO");
 		jso.put("idPartida", this.id);
-		this.jugadorConElTurno=(new Random()).nextInt(this.jugadores.size());
+		//this.jugadorConElTurno=(new Random()).nextInt(this.jugadores.size());
+		this.jugadorConElTurno=(0);
 		jso.put("jugadorConElTurno", getJugadorConElTurno().getUsername());
 		ArrayList<String[]> lista = new ArrayList();
 		for (Usuario jugador : jugadores) {

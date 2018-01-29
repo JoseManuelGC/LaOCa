@@ -17,13 +17,28 @@
 	    int w= Integer.parseInt(jso.optString("w"));
 	    int h= Integer.parseInt(jso.optString("h"));
 	    */
+	    Usuario usuario = (Usuario) session.getAttribute("usuario");
+		String string = request.getHeader("coordenadas"); 
+		String[] coordenadas = string.split(";");
+		int x1= Integer.parseInt(coordenadas[0]);
+		int y1= Integer.parseInt(coordenadas[1]);
+	    int w= Integer.parseInt(coordenadas[2]);
+	    int h= Integer.parseInt(coordenadas[3]);
+	    int nw = Integer.parseInt(coordenadas[4]);
+	    int nh = Integer.parseInt(coordenadas[5]);
+	    int jcropw = Integer.parseInt(coordenadas[6]);
+	    int jcroph = Integer.parseInt(coordenadas[7]);
+	    
 	    InputStream is = request.getInputStream();
+	    Manager.get().cambiarAvatar(is, x1, y1, w, h, nw, nh, jcropw, jcroph, usuario.getUsername());
 	    respuesta.put("result", "OK");
-	    Manager.get().cambiarAvatar(is);
+	    
+	    //InputStream is = request.getInputStream();
+	    //Manager.get().cambiarAvatar(is);
+	    
 	    /*
 	    
 	    String file2 = file.split(",")[1];
-
 	    byte[] imageData = Base64.decodeBase64(file2);
 	    BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
 	    //BufferedImage avatar = img.getSubimage(x1, y1, w, h);
@@ -78,10 +93,3 @@ private void comprobarCredenciales(String username, String email, String pwd1, S
 		throw new Exception("Las contraseñas no coinciden");
 }
 %>
-
-
-
-
-
-
-

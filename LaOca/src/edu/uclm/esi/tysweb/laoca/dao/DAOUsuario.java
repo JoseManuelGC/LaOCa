@@ -1,5 +1,7 @@
 package edu.uclm.esi.tysweb.laoca.dao;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,12 +13,16 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.bson.BsonArray;
+import org.bson.BsonBinary;
 import org.bson.BsonDateTime;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 import org.bson.BsonString;
 import org.bson.BsonValue;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import com.gargoylesoftware.htmlunit.javascript.host.Iterator;
@@ -26,6 +32,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import com.mongodb.gridfs.GridFS;
 
 import edu.uclm.esi.tysweb.laoca.dominio.Usuario;
 import edu.uclm.esi.tysweb.laoca.dominio.UsuarioRegistrado;
@@ -89,6 +97,7 @@ public class DAOUsuario {
 			bUsuario.append("victorias", new BsonInt32(usuario.getVictorias()));
 			bUsuario.append("derrotas", new BsonInt32(usuario.getDerrotas()));
 			usuarios.insertOne(bUsuario);
+			
 		}
 		connection.close();
 	}
@@ -350,5 +359,56 @@ public class DAOUsuario {
 		}
 		connection.close();
 		return usuario;
+	}
+	
+	public static void cambiarAvatar(InputStream is, String username) throws Exception {
+		MongoClient connection = MongoBroker.get().getConnection();
+		MongoDatabase db = connection.getDatabase("oca");
+		if(db.getCollection("usuarios")==null)
+			db.createCollection("usuarios");
+		MongoCollection<BsonDocument> usuarios = db.getCollection("usuarios", BsonDocument.class);
+		BsonDocument criterio = new BsonDocument();
+		criterio.append("username", new BsonString(username));
+		FindIterable<BsonDocument> resultadoUsername = usuarios.find(criterio);
+		if(resultadoUsername.first()==null) {
+			throw new Exception("Los invitados no pueden tener avatar");
+		}
+		else {
+			byte[] bytes = IOUtils.toByteArray(is);			
+			MongoCollection<BsonDocument> avatares = db.getCollection("avatares", BsonDocument.class);
+			BsonDocument criterioAvatar = new BsonDocument();
+			criterio.append("username", new BsonString(username));
+			FindIterable<BsonDocument> resultados = avatares.find(criterioAvatar);
+			BsonDocument resultado = resultados.first();
+			BsonDocument actualizacion = new BsonDocument();
+			actualizacion.append("username", new BsonString(resultado.getString("username").getValue()));
+			actualizacion.append("avatar", new BsonBinary(bytes));
+			avatares.replaceOne(criterio, actualizacion);			
+		}
+	}
+	
+	public static void setAvatar(InputStream is, String username) throws Exception{
+		MongoClient connection = MongoBroker.get().getConnection();
+		MongoDatabase db = connection.getDatabase("oca");
+		MongoCollection<BsonDocument> avatares = db.getCollection("avatares", BsonDocument.class);
+		byte[] bytes = IOUtils.toByteArray(is);		
+		BsonDocument avatar = new BsonDocument();
+		avatar.append("username", new BsonString(username));
+		avatar.append("avatar", new BsonBinary(bytes));
+		avatares.insertOne(avatar);
+		byte[] bytes64bytes = Base64.encodeBase64(IOUtils.toByteArray(is));
+		String content = new String(bytes64bytes);
+	}
+	
+	public static InputStream getAvatar(String username) throws Exception {
+		MongoClient connection = MongoBroker.get().getConnection();
+		MongoDatabase db = connection.getDatabase("oca");
+		MongoCollection<BsonDocument> avatares = db.getCollection("avatares", BsonDocument.class);
+		BsonDocument criterio = new BsonDocument();
+		criterio.append("username", new BsonString(username));
+		FindIterable<BsonDocument> resultados = avatares.find(criterio);
+		BsonDocument resultado = resultados.first();
+		byte[] bytes = resultado.getBinary("avatar").getData();
+		return new ByteArrayInputStream(bytes);
 	}
 }

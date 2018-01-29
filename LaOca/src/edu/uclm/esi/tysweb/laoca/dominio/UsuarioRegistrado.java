@@ -1,5 +1,6 @@
 package edu.uclm.esi.tysweb.laoca.dominio;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import edu.uclm.esi.tysweb.laoca.dao.DAOUsuario;
@@ -66,4 +67,15 @@ public class UsuarioRegistrado extends Usuario {
 		return DAOUsuario.registrarGoogle(this);
 	}	
 	
+	public static void cambiarAvatar(InputStream is, String username) throws Exception{
+		DAOUsuario.cambiarAvatar(is, username);
+	}
+	
+	public static void setAvatar(InputStream is, String username) throws Exception{
+		DAOUsuario.setAvatar(is, username);
+	}
+	
+	public static InputStream getAvatar(String username) throws Exception{
+		return DAOUsuario.getAvatar(username);
+	}
 }
