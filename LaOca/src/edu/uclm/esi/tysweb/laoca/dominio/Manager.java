@@ -48,14 +48,14 @@ public class Manager {
 		u.setUsername(username);
 		u.setEmail(email);
 		u.insert(password);		
-		UsuarioRegistrado.setAvatar(new FileInputStream("d://defaultAvatar.jpg"), username);
+		UsuarioRegistrado.setAvatar(new FileInputStream("D:\\GIT\\LaOCa\\LaOca\\defaultAvatar.jpg"), username);	
 		return u;
 	}
 	
 	public Usuario login(String username, String password) throws Exception {
 		UsuarioRegistrado u = new UsuarioRegistrado();
 		u.setUsername(username);
-		u.login(password);
+		u.login(password);	
 		return u;
 	}
 	
@@ -80,7 +80,6 @@ public class Manager {
 		findUsuario(usuario.getUsername());
 		Partida partida=new Partida(usuario, numeroDeJugadores);
 		usuario.setPartida(partida);
-		usuario.setColor(partida.asignarColor());
 		this.partidasPendientes.put(partida.getId(), partida);
 		this.usuarios.put(usuario.getUsername(), usuario);
 		return usuario;
@@ -104,7 +103,6 @@ public class Manager {
 			throw new Exception("El usuario ya está en una partida");
 		partida.add(usuario);
 		usuario.setPartida(partida);
-		usuario.setColor(partida.asignarColor());
 		usuarios.put(usuario.getUsername(), usuario);
 		if (partida.isReady()) {
 			this.partidasPendientes.remove(partida.getId());
@@ -164,7 +162,7 @@ public class Manager {
 		u.setUsername(username);
 		u.setEmail(email);
 		u.registrarGoogle();
-		UsuarioRegistrado.setAvatar(new FileInputStream("d://defaultAvatar.jpg"), username);
+		UsuarioRegistrado.setAvatar(new FileInputStream("D:\\GIT\\LaOCa\\LaOca\\defaultAvatar.jpg"), username);
 		return u;
 	}
 
@@ -209,5 +207,21 @@ public class Manager {
 		Base64.Encoder encoder = Base64.getEncoder();
 		String encoding = "data:image/png;base64," + encoder.encodeToString(bytes);
 		return encoding;
+	}
+
+	public JSONObject cierraSesion(String username, int idPartida) throws Exception {
+		Partida partida=this.partidasEnJuego.get(idPartida);
+		JSONObject mensaje=partida.cierraSesion(username);
+		if(mensaje!=null && mensaje.opt("ganador")!=null) {
+			terminar(partida);
+		}
+		else {
+			JSONObject jso2=new JSONObject();
+			jso2.put("tipo", "TUTURNO");	
+			jso2.put("jugador", partida.getJugadorConElTurno().getUsername());
+			partida.getJugadorConElTurno().enviar(jso2);
+		}
+		return mensaje;
+		
 	}
 }	

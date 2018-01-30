@@ -335,6 +335,11 @@ function volverInicio(){
 	jugadores.innerHTML="";
 	avatar.innerHTML = "";
 	files.disabled = false;
+	borrarFichas();
+	tablero.setAttribute("style", "display:none");
+	pararInterval();
+	myProgress.setAttribute("style", "display:none");
+	cerrarSesion();
 }
 
 function cambiarAvatar(){

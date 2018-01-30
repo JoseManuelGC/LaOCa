@@ -44,10 +44,6 @@ public class Partida {
 		return this.jugadores.size()==this.numeroDeJugadores;
 	}
 	
-	public String asignarColor() {
-		return colores.remove(0);
-	}
-
 	public void comenzar() throws IOException {
 		JSONObject jso=new JSONObject();
 		jso.put("tipo", "COMIENZO");
@@ -81,11 +77,11 @@ public class Partida {
 		if (jugador!=getJugadorConElTurno())
 			throw new Exception("No tienes el turno");
 		result.put("tipo", "POSICION");
-		result.put("jugador", jugador);
+		result.put("jugador", nombreJugador);
 		result.put("color", jugador.getColor());
 		result.put("dado", dado);
-		//result.put("casillaOrigen", jugador.getCasilla().getPos());
-		//result.put("dado", dado);
+		result.put("mensaje", "");
+		result.put("mensajeAdicional", "");
 		Casilla destino=this.tablero.tirarDado(jugador, dado);
 		result.put("destino", destino.getPos()+1);
 		Casilla siguiente=destino.getSiguiente();
@@ -120,7 +116,7 @@ public class Partida {
 		}
 		int turnosSinTirar=destino.getTurnosSinTirar();
 		if (turnosSinTirar>0) {
-			result.put("mensajeAdicional", jugador.getUsername() + " está " + turnosSinTirar + " turnos sin tirar porque ha caído en ");
+			result.put("mensajeAdicional", jugador.getUsername() + " está " + turnosSinTirar + " turnos sin tirar porque ha caído en la casilla "+(destino.getPos()+1));
 			jugador.setTurnosSinTirar(destino.getTurnosSinTirar());
 		}
 		result.put("jugadorConElTurno", pasarTurno(conservarTurno));
@@ -162,10 +158,7 @@ public class Partida {
 				jugador.enviar(jso);
 			}
 			catch (Exception e) {
-				// TODO: eliminar de la colecciÃ³n, mirar si la partida ha terminado
-				// y decirle al WSServer que quite a este jugador
-				//this.jugadores.remove(jugador);
-				//WSPartidas.removeSession(jugador);
+				
 			}
 		}
 	}
@@ -184,10 +177,44 @@ public class Partida {
 		result.put("tipo", "DIFUSION");
 		result.put("mensaje", jugador.getUsername() + " eliminado por timeout");
 		this.jugadores.remove(jugador);
+		ArrayList<String[]> lista = new ArrayList();
+		for (Usuario j : jugadores) {
+			String[] par = {j.getUsername(), j.getColor()};
+			lista.add(par);
+		}
+		JSONArray jsArray = new JSONArray(lista);
+		result.put("jugadores", jsArray);
 		this.jugadorConElTurno--;
+		result.put("jugadorConElTurno", pasarTurno(false));
 		if (this.jugadores.size()==1) {
 			this.ganador=this.jugadores.get(0);
 			result.put("ganador", this.ganador.getUsername());
+		}
+		broadcast(result);
+		jugador.setPartida(null);
+		jugador.setColor(null);
+		jugador.addResultado("derrota");
+		return result;
+	}
+	
+	public JSONObject cierraSesion(String nombreJugador) throws Exception {
+		Usuario jugador=findJugador(nombreJugador);
+		JSONObject result=new JSONObject();
+		result.put("tipo", "DIFUSION");
+		result.put("mensaje", jugador.getUsername() + " eliminado por cierre de sesión");
+		this.jugadores.remove(jugador);
+		ArrayList<String[]> lista = new ArrayList();
+		for (Usuario j : jugadores) {
+			String[] par = {j.getUsername(), j.getColor()};
+			lista.add(par);
+		}
+		JSONArray jsArray = new JSONArray(lista);
+		result.put("jugadores", jsArray);
+		this.jugadorConElTurno--;
+		result.put("jugadorConElTurno", pasarTurno(false));
+		if (this.jugadores.size()==1) {
+			this.ganador=this.jugadores.get(0);
+			result.put("ganador", this.ganador.getUsername());			
 		}
 		broadcast(result);
 		jugador.setPartida(null);
@@ -207,7 +234,7 @@ public class Partida {
 		}
 		JSONObject result=new JSONObject();		
 		result.put("tipo", "FIN");
-		result.put("ganador", getGanador());
+		result.put("ganador", getGanador().getUsername());
 		broadcast(result);		
 	}
 	

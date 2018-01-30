@@ -55,21 +55,21 @@ public class DAOUsuario {
 			criterio.append("email", new BsonString(usuario.getUsername()));		
 		FindIterable<BsonDocument> resultados = usuarios.find(criterio);
 		BsonDocument resultado = resultados.first();
-		if(resultado==null) {
-			connection.close();
+		if(resultado==null) {	
+			MongoBroker.get().close(connection);
 			throw new Exception("Nombre de usuario o contraseña no válidos");
 		}
 		else {
-			if(!resultado.getString("password").getValue().equals(getMD5(password))) {
-				connection.close();
+			if(!resultado.getString("password").getValue().equals(getMD5(password))) {	
+				MongoBroker.get().close(connection);
 				throw new Exception("Nombre de usuario o contraseña no válidos");
 			}
 		}
 		usuario.setUsername(resultado.getString("username").getValue());
 		usuario.setEmail(resultado.getString("email").getValue());
 		usuario.setVictorias(resultado.getInt32("victorias").getValue());
-		usuario.setDerrotas(resultado.getInt32("derrotas").getValue());
-		connection.close();
+		usuario.setDerrotas(resultado.getInt32("derrotas").getValue());	
+		MongoBroker.get().close(connection);
 		return usuario;		
 	}
 	
@@ -85,8 +85,8 @@ public class DAOUsuario {
 		criterioEmail.append("email", new BsonString(usuario.getEmail()));
 		FindIterable<BsonDocument> resultadoUsername = usuarios.find(criterioUsername);
 		FindIterable<BsonDocument> resultadoEmail = usuarios.find(criterioEmail);
-		if(resultadoUsername.first()!=null || resultadoEmail.first()!=null) {
-			connection.close();
+		if(resultadoUsername.first()!=null || resultadoEmail.first()!=null) {	
+			MongoBroker.get().close(connection);
 			throw new Exception("Nombre de usuario o email en uso");
 		}
 		else {
@@ -98,8 +98,8 @@ public class DAOUsuario {
 			bUsuario.append("derrotas", new BsonInt32(usuario.getDerrotas()));
 			usuarios.insertOne(bUsuario);
 			
-		}
-		connection.close();
+		}	
+		MongoBroker.get().close(connection);
 	}
 	
 	public static void buscar(String username) throws Exception {
@@ -111,10 +111,11 @@ public class DAOUsuario {
 		BsonDocument criterioUsername = new BsonDocument();
 		criterioUsername.append("username", new BsonString(username));
 		FindIterable<BsonDocument> resultadoUsername = usuarios.find(criterioUsername);
-		if(resultadoUsername.first()!=null) {
-			connection.close();
+		if(resultadoUsername.first()!=null) {	
+			MongoBroker.get().close(connection);
 			throw new Exception("Nombre de usuario en uso");
-		}
+		}	
+		MongoBroker.get().close(connection);
 	}
 	
 	public static void cambiarPassword(String username, String passwordVieja, String passwordNueva) throws Exception {
@@ -126,8 +127,10 @@ public class DAOUsuario {
 		criterio.append("password", new BsonString(getMD5(passwordVieja)));
 		FindIterable<BsonDocument> resultados = usuarios.find(criterio);
 		BsonDocument resultado = resultados.first();
-		if(resultado==null)
+		if(resultado==null)	{
+			MongoBroker.get().close(connection);
 			throw new Exception("Contraseña incorrecta");
+		}
 		else {
 			BsonDocument actualizacion = new BsonDocument();
 			actualizacion.append("username", new BsonString(resultado.getString("username").getValue()));
@@ -137,7 +140,7 @@ public class DAOUsuario {
 			actualizacion.append("derrotas", new BsonInt32(resultado.getInt32("derrotas").getValue()));
 			usuarios.replaceOne(criterio, actualizacion);
 		}
-		connection.close();
+		MongoBroker.get().close(connection);
 	}
 
 	public static void recuperar(String email) throws Exception {
@@ -148,8 +151,10 @@ public class DAOUsuario {
 		criterio.append("email", new BsonString(email));
 		FindIterable<BsonDocument> resultados = usuarios.find(criterio);
 		BsonDocument resultado = resultados.first();
-		if(resultado==null)
+		if(resultado==null) {
+			MongoBroker.get().close(connection);
 			throw new Exception("El correo indicado no está registrado");
+		}
 		else {
 			String username = resultado.getString("username").getValue();
 			String random = String.valueOf((int) Math.floor(Math.random()*9999999+1));
@@ -183,7 +188,7 @@ public class DAOUsuario {
 			String enlace = "http://localhost:8080/LaOca/recuperar.html?token="+token;
 			enviarCorreo(resultadoCorreo.getString("email").getValue(), resultadoCorreo.getString("password").getValue(), email, "Recuperación de contraseña", cuerpo+enlace);
 		}
-		connection.close();		
+		MongoBroker.get().close(connection);	
 	}
 	
 	public static String getMD5(String input) {
@@ -232,20 +237,26 @@ public class DAOUsuario {
 		MongoClient connection = MongoBroker.get().getConnection();
 		MongoDatabase db = connection.getDatabase("oca");
 		MongoCollection<BsonDocument> recuperaciones = db.getCollection("recuperaciones", BsonDocument.class);
-		if(recuperaciones == null)
-			throw new Exception("No se ha enviado solicitado ninguna recuperación de contraseña");		
+		if(recuperaciones == null) {
+			MongoBroker.get().close(connection);
+			throw new Exception("No se ha enviado solicitado ninguna recuperación de contraseña");
+		}
 		BsonDocument criterio= new BsonDocument();
 		criterio.append("token", new BsonString(token));
 		FindIterable<BsonDocument> resultados = recuperaciones.find(criterio);
 		BsonDocument resultado = resultados.first();
-		if(resultado==null)
+		if(resultado==null) {
+			MongoBroker.get().close(connection);
 			throw new Exception("El token no es válido");
+		}
 		else {
 			long limite = resultado.getDateTime("expiracion").getValue();
 			Calendar ahora = Calendar.getInstance();
 			long tiempo = ahora.getTime().getTime();
-			if(tiempo>limite)
+			if(tiempo>limite) {
+				MongoBroker.get().close(connection);
 				throw new Exception("El tiempo de recuperación ha expirado");
+			}				
 			else {
 				MongoCollection<BsonDocument> usuarios = db.getCollection("usuarios", BsonDocument.class);
 				BsonDocument criterio2= new BsonDocument();
@@ -263,6 +274,7 @@ public class DAOUsuario {
 				connection.close();
 			}
 		}
+		MongoBroker.get().close(connection);
 	}
 	
 	public static ArrayList getRanking() throws Exception {
@@ -273,8 +285,10 @@ public class DAOUsuario {
 		criterio.append("victorias", new BsonInt32(-1));
 		FindIterable<BsonDocument> resultados = usuarios.find().sort(criterio);
 		ArrayList<String[]> lista = new ArrayList();
-		if(resultados.first()==null)
+		if(resultados.first()==null) {
+			MongoBroker.get().close(connection);
 			throw new Exception("No se han encontrado resultados");
+		}
 		else {
 			MongoCursor<BsonDocument> cursor = resultados.iterator();
 			while (cursor.hasNext()) {
@@ -283,7 +297,7 @@ public class DAOUsuario {
 			    lista.add(resultado);
 			}
 		}
-		connection.close();
+		MongoBroker.get().close(connection);
 		return lista;
 	}
 	
@@ -310,7 +324,7 @@ public class DAOUsuario {
 			}
 			usuarios.replaceOne(criterio, actualizacion);
 		}
-		connection.close();
+		MongoBroker.get().close(connection);
 	}
 	
 	public static UsuarioRegistrado registrarGoogle(UsuarioRegistrado usuario) throws Exception {
@@ -333,12 +347,12 @@ public class DAOUsuario {
 			BsonDocument resultado = new BsonDocument();
 			resultado = resultados.first();
 			if(resultado==null) {
-				connection.close();
+				MongoBroker.get().close(connection);
 				throw new Exception("Nombre de usuario o email en uso");	
 			}
 			else {
 				if(resultado.containsKey("password")){
-					connection.close();
+					MongoBroker.get().close(connection);
 					throw new Exception("Nombre de usuario o email en uso");
 				}
 				else {
@@ -357,7 +371,7 @@ public class DAOUsuario {
 			bUsuario.append("derrotas", new BsonInt32(usuario.getDerrotas()));
 			usuarios.insertOne(bUsuario);
 		}
-		connection.close();
+		MongoBroker.get().close(connection);
 		return usuario;
 	}
 	
@@ -371,6 +385,7 @@ public class DAOUsuario {
 		criterio.append("username", new BsonString(username));
 		FindIterable<BsonDocument> resultadoUsername = usuarios.find(criterio);
 		if(resultadoUsername.first()==null) {
+			MongoBroker.get().close(connection);
 			throw new Exception("Los invitados no pueden tener avatar");
 		}
 		else {
@@ -383,8 +398,9 @@ public class DAOUsuario {
 			BsonDocument actualizacion = new BsonDocument();
 			actualizacion.append("username", new BsonString(username));
 			actualizacion.append("avatar", new BsonBinary(bytes));
-			avatares.replaceOne(criterio, actualizacion);			
+			avatares.replaceOne(criterio, actualizacion);
 		}
+		MongoBroker.get().close(connection);
 	}
 	
 	public static void setAvatar(InputStream is, String username) throws Exception{
@@ -398,6 +414,7 @@ public class DAOUsuario {
 		avatares.insertOne(avatar);
 		byte[] bytes64bytes = Base64.encodeBase64(IOUtils.toByteArray(is));
 		String content = new String(bytes64bytes);
+		MongoBroker.get().close(connection);
 	}
 	
 	public static byte[] getAvatar(String username) throws Exception {
@@ -409,6 +426,7 @@ public class DAOUsuario {
 		FindIterable<BsonDocument> resultados = avatares.find(criterio);
 		BsonDocument resultado = resultados.first();
 		byte[] bytes = resultado.getBinary("avatar").getData();
+		MongoBroker.get().close(connection);
 		return bytes;
 	}
 }

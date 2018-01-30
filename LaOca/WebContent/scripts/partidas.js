@@ -6,6 +6,9 @@ function crearPartida() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK") {
+				areaChat.innerHTML="";
+				borrarFichas();
+				tablero.setAttribute("style", "display:none");
 				addMensaje(respuesta.mensaje);
 				conectarWebSocket();
 			} else {
@@ -27,6 +30,9 @@ function unirse() {
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK") {
+				areaChat.innerHTML="";
+				borrarFichas();
+				tablero.setAttribute("style", "display:none");
 				addMensaje(respuesta.mensaje);
 				conectarWebSocket();
 			} else {
@@ -61,9 +67,9 @@ function conectarWebSocket() {
 			for(var i = 0; i<lista.length;i++){
 				jugadores.innerHTML+="<div class=\"jugadores\" style=\"background-color:"+lista[i][1]+";color:white\">"+lista[i][0]+"</div>";
 			}
+			verTurno(mensaje.jugadorConElTurno);
 		}
 		else if (mensaje.tipo=="COMIENZO") {
-			areaChat.innerHTML="";
 			addMensaje("Comienza la partida");
 			var lista = mensaje.jugadores;
 			for(var i = 0; i<lista.length;i++){
@@ -75,7 +81,11 @@ function conectarWebSocket() {
 			tuTurno();
 			verTurno(mensaje.jugador);
 		} else if (mensaje.tipo=="POSICION"){
-			addMensaje("El jugador "+mensaje.jugador+" está en la "+(mensaje.casillaOrigen+1)+", ha sacado "+mensaje.dado);
+			addMensaje("El jugador "+mensaje.jugador+" saca un "+(mensaje.dado)+" y llega a la casilla "+mensaje.destino);
+			if(mensaje.mensaje!="")
+				addMensaje(mensaje.mensaje);
+			if(mensaje.mensajeAdicional!="")
+				addMensaje(mensaje.mensajeAdicional);
 			moverFicha(mensaje.destino, mensaje.color);
 			verTurno(mensaje.jugadorConElTurno);
 		} else if (mensaje.tipo=="MENSAJE") {
@@ -88,6 +98,10 @@ function conectarWebSocket() {
 			ws.close();
 		}
 	}	
+}
+
+function cerrarSesion(){
+	ws.close();
 }
 
 function comenzar() {
@@ -163,7 +177,12 @@ function pararRotacion(){
 }
 
 function testingDado(dado){
-	var mensaje={tipo: "DADO", puntos: dado};	
+	btnDado.disabled = true;
+	var mensaje={tipo: "DADO", puntos: dado};
+	if(dado!=0)
+		document.getElementById("dado").src=carasDado[dado];
+	clearInterval(timeout);
+	myProgress.setAttribute("style", "display:none");
 	ws.send(JSON.stringify(mensaje));
 }
 
@@ -243,4 +262,8 @@ function fichasTesting(){
 	posicion.innerHTML+= "<div class=\"fichasTesting\" id=\"posicionOrange\" type=\"hidden\">"+fichas.orange+"</div>";
 	posicion.innerHTML+= "<div class=\"fichasTesting\" id=\"posicionGreen\" type=\"hidden\">"+fichas.green+"</div>";
 	posicion.innerHTML+= "<div class=\"fichasTesting\" id=\"posicionRed\" type=\"hidden\">"+fichas.red+"</div>";
+}
+
+function pararInterval(){
+	clearInterval(timeout);
 }

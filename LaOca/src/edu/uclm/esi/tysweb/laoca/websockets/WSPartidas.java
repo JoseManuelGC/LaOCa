@@ -57,9 +57,11 @@ public class WSPartidas {
 	}
 	
 	@OnClose
-	public void usuarioSeVa(Session session) {
-		sesionesPorId.remove(session.getId());
-		broadcast("Se ha ido un usuario");
+	public void usuarioSeVa(Session session) throws Exception {
+		String username = sesiones.get(session.getId());
+		Usuario usuario = Manager.get().getUsuario(username);
+		Manager.get().cierraSesion(usuario.getUsername(), usuario.getPartida().getId());
+		usuario.getPartida().cierraSesion(usuario.getUsername());
 	}
 	
 	@OnMessage
