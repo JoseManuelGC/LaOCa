@@ -309,6 +309,7 @@ function onSignIn(googleUser) {
 function mostrarDatosUsuario(username){
 	nombreUsuario.innerHTML = username;
 	getAvatar();
+	getPublicidad();
 }
 
 function salirCuenta(){
@@ -395,4 +396,20 @@ function dataURItoBlob(dataURI) {
         array.push(binary.charCodeAt(i));
     }
     return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+}
+
+function getPublicidad(){
+	var requestExterna=new XMLHttpRequest();
+	  requestExterna.open("GET", "http://localhost:8090/adServer/enviarAnuncio.jsp"); 
+	  requestExterna.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+	  requestExterna.onreadystatechange=function() {
+	    if (requestExterna.readyState==4) { 
+	      if (requestExterna.status==200) {
+		    	anuncio.innerHTML = requestExterna.responseText;	        
+	      } else {
+	        alert("Error con recurso externo: " + requestExterna.status);
+	      } 
+	    }
+	  };
+	  requestExterna.send("preferencia="+usernameLogin.value);
 }

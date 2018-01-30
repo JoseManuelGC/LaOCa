@@ -11,6 +11,8 @@
 	try {
 		Usuario usuario = (Usuario) session.getAttribute("usuario");
 		int numeroJugadores=jso.getInt("numeroJugadores");
+		if(numeroJugadores<2 || numeroJugadores>4)
+			throw new Exception("El número de jugadores no es válido");
 		Manager.get().crearPartida(usuario, numeroJugadores);
 		//session.setAttribute("usuario", usuario);
 		respuesta.put("result", "OK");

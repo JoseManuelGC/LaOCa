@@ -101,7 +101,8 @@ function conectarWebSocket() {
 }
 
 function cerrarSesion(){
-	ws.close();
+	if(ws!=null)
+		ws.close();
 }
 
 function comenzar() {
