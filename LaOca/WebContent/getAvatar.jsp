@@ -15,11 +15,9 @@
 	JSONObject respuesta=new JSONObject();
 	try {
 		Usuario usuario = (Usuario) session.getAttribute("usuario");
-		InputStream is=Manager.get().getAvatar(usuario.getUsername());
-		byte[] bytes64bytes = Base64.encodeBase64(IOUtils.toByteArray(is));
-		String content = new String(bytes64bytes);
+		String imagen = Manager.get().getAvatar(usuario.getUsername());
 		respuesta.put("result", "OK");		
-		respuesta.put("avatar", content);
+		respuesta.put("avatar", imagen);
 	}
 	catch (Exception e) {
 		respuesta.put("result", "ERROR");

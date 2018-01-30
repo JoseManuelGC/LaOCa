@@ -75,7 +75,8 @@ public class UsuarioRegistrado extends Usuario {
 		DAOUsuario.setAvatar(is, username);
 	}
 	
-	public static InputStream getAvatar(String username) throws Exception{
+	public static byte[] getAvatar(String username) throws Exception{
 		return DAOUsuario.getAvatar(username);
 	}
+	
 }

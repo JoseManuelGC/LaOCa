@@ -11,7 +11,6 @@ function registrar() {
 				botonSalirCuenta.setAttribute("style", "display:block");
 				botonSalirGoogle.setAttribute("style", "display:none");
 				mostrarDatosUsuario(usernameRegister.value);
-				getAvatar();
 			}
 			else{
 				document.getElementById("feedbackRegisterText").innerHTML = respuesta.mensaje;
@@ -64,6 +63,7 @@ function invitado() {
 				botonSalirCuenta.setAttribute("style", "display:block");
 				botonSalirGoogle.setAttribute("style", "display:none");
 				mostrarDatosUsuario(respuesta.username);
+				files.disabled = true;
 			}	
 			else{
 				document.getElementById("feedbackInvitadoText").innerHTML = respuesta.mensaje;
@@ -281,9 +281,6 @@ function registrarGoogle(googleUser) {
 
 function onSignIn(googleUser) {
 	var profile = googleUser.getBasicProfile();
-	console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead. console.log('Name: ' + profile.getName());
-	console.log('Image URL: ' + profile.getImageUrl());
-	console.log('Email: ' + profile.getEmail());
 	var request = new XMLHttpRequest();	
 	request.open("post", "loginGoogle.jsp");
 	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -311,6 +308,7 @@ function onSignIn(googleUser) {
 
 function mostrarDatosUsuario(username){
 	nombreUsuario.innerHTML = username;
+	getAvatar();
 }
 
 function salirCuenta(){
@@ -335,6 +333,8 @@ function volverInicio(){
 	$('.panel-collapse.in').collapse('hide');
 	areaChat.innerHTML="";
 	jugadores.innerHTML="";
+	avatar.innerHTML = "";
+	files.disabled = false;
 }
 
 function cambiarAvatar(){
@@ -348,7 +348,10 @@ function cambiarAvatar(){
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK"){
-				
+				getAvatar();
+				imagenContainer.innerHTML = "";
+				files.value = "";
+				botonCambiarAvatar.disabled = true;
 			}
 			else{
 				
@@ -360,7 +363,6 @@ function cambiarAvatar(){
 }
 
 function getAvatar(){
-	var blob = dataURItoBlob(document.getElementById("target").src);
 	var request = new XMLHttpRequest();
 	request.open("post", "getAvatar.jsp");
 	request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -368,15 +370,17 @@ function getAvatar(){
 		if (request.readyState==4) {
 			var respuesta=JSON.parse(request.responseText);
 			if (respuesta.result=="OK"){
-				
+				avatar.innerHTML = "<img class=\"img-circle\" id=\"imagenAvatar\" src=\""+ respuesta.avatar+"\" style=\"max-width: 100%\"></div>";
 			}
 			else{
 				
 			}
 		}
 	};
-	request.setRequestHeader("coordenadas", x.value+";"+y.value+";"+w.value+";"+h.value+";"+target.naturalWidth+";"+target.naturalHeight+";"+jcrop.clientWidth+";"+jcrop.clientHeight);
-	request.send(blob);
+	var p = {	
+			
+		};
+		request.send("p=" + JSON.stringify(p));
 }
 
 function dataURItoBlob(dataURI) {

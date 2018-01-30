@@ -381,7 +381,7 @@ public class DAOUsuario {
 			FindIterable<BsonDocument> resultados = avatares.find(criterioAvatar);
 			BsonDocument resultado = resultados.first();
 			BsonDocument actualizacion = new BsonDocument();
-			actualizacion.append("username", new BsonString(resultado.getString("username").getValue()));
+			actualizacion.append("username", new BsonString(username));
 			actualizacion.append("avatar", new BsonBinary(bytes));
 			avatares.replaceOne(criterio, actualizacion);			
 		}
@@ -400,7 +400,7 @@ public class DAOUsuario {
 		String content = new String(bytes64bytes);
 	}
 	
-	public static InputStream getAvatar(String username) throws Exception {
+	public static byte[] getAvatar(String username) throws Exception {
 		MongoClient connection = MongoBroker.get().getConnection();
 		MongoDatabase db = connection.getDatabase("oca");
 		MongoCollection<BsonDocument> avatares = db.getCollection("avatares", BsonDocument.class);
@@ -409,6 +409,6 @@ public class DAOUsuario {
 		FindIterable<BsonDocument> resultados = avatares.find(criterio);
 		BsonDocument resultado = resultados.first();
 		byte[] bytes = resultado.getBinary("avatar").getData();
-		return new ByteArrayInputStream(bytes);
+		return bytes;
 	}
 }

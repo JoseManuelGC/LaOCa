@@ -12,13 +12,13 @@ import java.net.URL;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Base64;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.io.FileUtils;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.xerces.util.URI;
 import org.json.JSONObject;
 
@@ -163,7 +163,8 @@ public class Manager {
 		UsuarioRegistrado u = new UsuarioRegistrado();
 		u.setUsername(username);
 		u.setEmail(email);
-		u.registrarGoogle();		
+		u.registrarGoogle();
+		UsuarioRegistrado.setAvatar(new FileInputStream("d://defaultAvatar.jpg"), username);
 		return u;
 	}
 
@@ -182,36 +183,6 @@ public class Manager {
 	}
 	
 	public void cambiarAvatar(InputStream is, int x, int y, int w, int h, int nw, int nh, int jcropw, int jcroph, String username) throws Exception {
-		
-		/*
-	    byte[] imageData = Base64.decodeBase64(file2);
-	    InputStream inputStream = new ByteArrayInputStream(imageData);
-	    BufferedImage imagen = ImageIO.read(inputStream);
-	    //BufferedImage avatar = img.getSubimage(x1, y1, w, h);
-	    File outputfile = new File("image.jpeg");
-	    ImageIO.write(imagen, "jpg", outputfile);
-		
-		byte[] btDataFile = new sun.misc.BASE64Decoder().decodeBuffer(img);
-		File of = new File("yourFile.jpg");
-		FileOutputStream osf = new FileOutputStream(of);
-		osf.write(btDataFile);
-		osf.flush();
-		*/
-		
-		/*
-		//FUNCIONA   FUNCIONA
-		File of = new File("D:\\imagen.jpg");
-		byte[] buffer = new byte[16 * 1024];
-		OutputStream output = new FileOutputStream(of);
-		int bytesRead;
-		while ((bytesRead = is.read(buffer)) != -1){
-		    System.out.println(bytesRead);
-		    output.write(buffer, 0, bytesRead);
-		}
-		output.close();
-		is.close();
-		//FUNCIONA FUNCIONA
-		*/
 		double porcentajeX = (double)x/(double)jcropw;
 		double porcentajeY = (double)y/(double)jcroph;
 		double nuevaX = (double)nw*(double)porcentajeX;
@@ -227,11 +198,16 @@ public class Manager {
 		
 		BufferedImage imBuff = ImageIO.read(is);
 		BufferedImage avatar = imBuff.getSubimage(finalX, finalY, finalW, finalH);
-		File of = new File("D:\\"+username+".jpg");
-	    ImageIO.write(avatar, "jpg", of);
-	    ByteArrayOutputStream os = new ByteArrayOutputStream();
-	    ImageIO.write(avatar, "gif", os);
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    ImageIO.write(avatar, "jpg", os);
 	    InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
 	    UsuarioRegistrado.cambiarAvatar(inputStream, username);	    
-	}	
+	}
+	
+	public String getAvatar(String username) throws Exception {
+		byte[] bytes = UsuarioRegistrado.getAvatar(username);
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encoding = "data:image/png;base64," + encoder.encodeToString(bytes);
+		return encoding;
+	}
 }	

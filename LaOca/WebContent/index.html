@@ -14,6 +14,9 @@
 		word-wrap: break-word;
 		white-space: pre-wrap;
 		}
+		#botonCambiarAvatar{
+			hidden: true;
+		}
 		.img-border {
 		    border: 4px solid black;
 		}
@@ -412,9 +415,10 @@
   <div class="container-fluid" id="juego" style="display:none">
    <div class="col-md-3">
    <div class="row">
-   <div class="col-md-4" id="avatar">
+   <div class="col-md-6" id="avatar">
+   
    </div>
-   <div class="col-md-8" id="nombreUsuario">
+   <div class="col-md-6" id="nombreUsuario">
    </div>
    </div>
    <div class="row">
@@ -444,14 +448,14 @@
   </div>      
     <div id="form-container">
       <form id="cropimg" name="cropimg" method="post" action="crop.php" target="_blank">
-        <input id="x" name="x">
-        <input id="y" name="y">
-        <input id="w" name="w">
-        <input id="h" name="h">
-        <input type="button" onclick="cambiarAvatar()" name="botonCambiarAvatar" id="botonCambiarAvatar" tabindex="4" class="form-control btn btn-primary" value="Cambiar avatar">
-        <input type="file" id="files" name="files[]" />
+        <input id="x" name="x" type="hidden">
+        <input id="y" name="y" type="hidden">
+        <input id="w" name="w" type="hidden">
+        <input id="h" name="h" type="hidden">
+        <input type="file" id="files" name="files[]" accept="image/jpeg"/>
         <br />
         <output id="list"></output>
+        <input type="button" onclick="cambiarAvatar()" name="botonCambiarAvatar" id="botonCambiarAvatar" tabindex="4" class="form-control btn btn-primary" value="Cambiar avatar" disabled=true>
       </form>
     </div>
 </div>
@@ -682,8 +686,6 @@ function archivo(evt) {
       reader.onload = (function(theFile) {
           return function(e) {
            document.getElementById("imagenContainer").innerHTML = ['<img class="img-responsive" id="target" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
-           
-      		//cambiarAvatar(dataURItoBlob(e.target.result));
            llamarCrop();
           };
       })(f);
@@ -813,10 +815,12 @@ function cambiar(){
     $('#y').val(c.y);
     $('#w').val(c.w);
     $('#h').val(c.h);
+    botonCambiarAvatar.disabled = false;
   }
   function clearCoords()
   {
     $('#coords input').val('');
+    botonCambiarAvatar.disabled = true;
   }
   
   </script>
